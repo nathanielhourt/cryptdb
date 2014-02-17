@@ -14,6 +14,9 @@ CONFIG   -= app_bundle
 
 TEMPLATE = app
 
-CONFIG  += crypto
+CONFIG  += crypto c++11
 
 SOURCES += main.cpp
+
+HEADERS += \
+    raw_plaintext.hpp

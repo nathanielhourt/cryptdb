@@ -5,44 +5,29 @@
 
 #include <cstdio>
 
+#include "raw_plaintext.hpp"
+
 int main(int argc, char *argv[])
 {
     QCA::Initializer init;
     Q_UNUSED(init);
     QCoreApplication a(argc, argv);
 
-    QTextStream qin(stdin);
-    QTextStream qout(stdout);
+    QByteArray data;
+    QDataStream datastream(&data, QIODevice::ReadWrite);
 
     QCA::SymmetricKey key(16);
-    QCA::InitializationVector iv(16);
+    datastream << key.toByteArray();
 
-    QCA::Cipher cipher(QString("aes128"),QCA::Cipher::CBC,
-                       QCA::Cipher::DefaultPadding,
-                       QCA::Encode,
-                       key, iv);
+    QByteArray holder;
+    QDataStream str(data);
+    str >> holder;
+    QCA::SymmetricKey key2(holder);
 
-    QCA::SecureArray msg = "Hello, QCA!";
-    msg = cipher.process(msg);
-    qout << "ctxt: " << qPrintable(msg.toByteArray().toBase64()) << endl;
-
-    cipher.setup(QCA::Decode, key, iv);
-
-    msg = cipher.process(msg);
-    qout << "ptxt: " << msg.toByteArray() << endl;
-
-    qout << "Enter a message: " << flush;
-    msg = qin.readLine().toLocal8Bit();
-
-    cipher.setup(QCA::Encode, key, iv);
-
-    msg = cipher.process(msg);
-    qout << "ctxt: " << qPrintable(msg.toByteArray().toBase64()) << endl;
-
-    cipher.setup(QCA::Decode, key, iv);
-
-    msg = cipher.process(msg);
-    qout << "ptxt: " << msg.toByteArray() << endl;
+    if (key == key2)
+        printf("Good\n");
+    else
+        printf("Bad\n");
 
     return 0;
 }
