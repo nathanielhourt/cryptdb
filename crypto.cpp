@@ -19,5 +19,17 @@ QCA::SecureArray Crypto::generateKi(QCA::SecureArray kk, QCA::SecureArray Li)
     return result;
 }
 
+QCA::SecureArray Crypto::arrayXor(QCA::SecureArray a, QCA::SecureArray b)
+{
+    if (a.size() != b.size())
+        return QCA::SecureArray();
+
+    QCA::SecureArray c(a.size());
+    for (int i = 0; i < a.size(); ++i)
+        c[i] = a[i] ^ b[i];
+
+    return c;
+}
+
 const quint32 Crypto::N_BYTES = 4;
 const quint32 Crypto::M_BYTES = 1;

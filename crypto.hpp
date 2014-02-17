@@ -31,6 +31,20 @@ public:
      */
     static QCA::SecureArray generateKi(QCA::SecureArray kk, QCA::SecureArray Li);
 
+
+
+    /**
+     * @brief Xors the two arrays
+     * @param a First array to xor
+     * @param b Second array to xor
+     *
+     * Xors a and b together and returns the result. a and b must be the same length; if they are not, an empty
+     * array is returned.
+     *
+     * @return a ^ b
+     */
+    static QCA::SecureArray arrayXor(QCA::SecureArray a, QCA::SecureArray b);
+
     const static quint32 N_BYTES;
     const static quint32 M_BYTES;
 };
