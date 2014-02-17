@@ -26,15 +26,13 @@ public:
     /**
      * @brief Decrypt the encrypted crypticRows from the database server for reading
      * @param crypticRows The encrypted rows from the database server, which are to be decrypted
-     * @param rowIndices Parallel to crypticRows, rowIndices[i] should be the index of the word at
-     * crypticRows[i][0]
      *
      * After making a query to the server, it will return a list of encrypted rows. This method will
      * decrypt those rows and return them as plaintext.
      *
      * @return A decrypted version of crypticRows
      */
-    QList<QList<DB::Word> > decryptRows(QList<QList<DB::Word> > crypticRows, QList<quint32> rowIndices);
+    QList<QPair<quint32, QList<DB::Word> > > decryptRows(QList<QList<DB::Word> > crypticRows);
 
     /**
      * @brief Encrypts the word plainText for searching within the database server

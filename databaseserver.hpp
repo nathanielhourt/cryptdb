@@ -51,7 +51,7 @@ public:
      *
      * @return All rows containing the specified word
      */
-    QList<QList<DB::Word> > findRowsContaining(DB::Word word, qint8 column = -1);
+    QList<QPair<quint32, QList<DB::Word> > > findRowsContaining(DB::Word word, qint8 column = -1);
 signals:
 
 public slots:
