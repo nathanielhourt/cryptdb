@@ -25,7 +25,31 @@ public:
      */
     quint32 nextAvailableIndex();
 
+    /**
+     * @brief Adds a new row to the database
+     * @param newRow The new row to add
+     *
+     * This method adds a new row to the end of the database. The row should be
+     * properly encrypted already, and must have taken nextAvailableIndex() into
+     * account.
+     */
+    void appendRow(QList<quint32> newRow);
 
+    /**
+     * @brief Return all rows containing the specified word
+     * @param word The word to search for
+     * @param column The column to search for the word in; if -1, search all
+     *
+     * This method searches the encrypted database for word. If column is not
+     * -1, then only the specified column is searched, but the entire matching
+     * row will be returned. If column is -1, then all columns are searched.
+     *
+     * If column is less than -1 or greater than the highest column index, the
+     * return value is QList<QList<quint32> >()
+     *
+     * @return All rows containing the specified word
+     */
+    QList<QList<quint32> > findRowsContaining(quint32 word, qint8 column = -1);
 signals:
 
 public slots:
