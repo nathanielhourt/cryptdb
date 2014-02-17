@@ -19,6 +19,9 @@ public:
      * @return The S value at the given index
      */
     static QCA::SecureArray generateS(QCA::SecureArray ks, DB::Index i);
+
+    const static quint32 N_BYTES;
+    const static quint32 M_BYTES;
 };
 
 #endif // CRYPTO_H
