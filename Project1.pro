@@ -16,7 +16,9 @@ TEMPLATE = app
 
 CONFIG  += crypto c++11
 
-SOURCES += main.cpp
+SOURCES += main.cpp \
+    databaseserver.cpp
 
 HEADERS += \
-    raw_plaintext.hpp
+    raw_plaintext.hpp \
+    databaseserver.h
