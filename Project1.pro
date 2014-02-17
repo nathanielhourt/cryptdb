@@ -18,9 +18,11 @@ CONFIG  += crypto c++11
 
 SOURCES += main.cpp \
     databaseserver.cpp \
-    databaseclient.cpp
+    databaseclient.cpp \
+    crypto.cpp
 
 HEADERS += \
     databaseserver.hpp \
     databaseclient.hpp \
-    database.hpp
+    database.hpp \
+    crypto.hpp
