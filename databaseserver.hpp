@@ -3,6 +3,8 @@
 
 #include <QObject>
 
+#include "raw_plaintext.hpp"
+
 class DatabaseServer : public QObject
 {
     Q_OBJECT
@@ -33,7 +35,7 @@ public:
      * properly encrypted already, and must have taken nextAvailableIndex() into
      * account.
      */
-    void appendRow(QList<quint32> newRow);
+    void appendRow(QList<DB::Word> newRow);
 
     /**
      * @brief Return all rows containing the specified word
@@ -49,13 +51,13 @@ public:
      *
      * @return All rows containing the specified word
      */
-    QList<QList<quint32> > findRowsContaining(quint32 word, qint8 column = -1);
+    QList<QList<DB::Word> > findRowsContaining(DB::Word word, qint8 column = -1);
 signals:
 
 public slots:
 
 private:
-    QList<QList<quint32> > crypticDatabase;
+    QList<QList<DB::Word> > crypticDatabase;
 };
 
 #endif // DATABASESERVER_H
