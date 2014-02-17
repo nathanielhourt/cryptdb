@@ -1,12 +1,12 @@
 #include <QCoreApplication>
 
-#include <QtCrypto>
+#include <QtCrypto/qca.h>
 #include <QTextStream>
 
 #include <cstdio>
 
 #include "database.hpp"
-
+#include "crypto.hpp"
 int main(int argc, char *argv[])
 {
     QCA::Initializer init;
@@ -28,6 +28,11 @@ int main(int argc, char *argv[])
         printf("Good\n");
     else
         printf("Bad\n");
+
+    Crypto crypt;
+    int aa = 5;
+    DB::Word test = QByteArray::fromRawData((char*)&aa,sizeof(int));
+    crypt.PreEncrypt(test);
 
     return 0;
 }
