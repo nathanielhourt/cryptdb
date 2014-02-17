@@ -20,6 +20,17 @@ public:
      */
     static QCA::SecureArray generateS(QCA::SecureArray ks, DB::Index i);
 
+    /**
+     * @brief Generate a k_i value for the given L_i
+     * @param kk The client's secret key for k_i values
+     * @param Li The L_i value to create a k_i for
+     *
+     * This function generates a k_i value using the secret key ks and the left section of the pre-encrypted word.
+     *
+     * @return k_i for L_i using kk
+     */
+    static QCA::SecureArray generateKi(QCA::SecureArray kk, QCA::SecureArray Li);
+
     const static quint32 N_BYTES;
     const static quint32 M_BYTES;
 };
