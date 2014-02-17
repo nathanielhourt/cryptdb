@@ -5,7 +5,7 @@
 
 #include <cstdio>
 
-#include "raw_plaintext.hpp"
+#include "database.hpp"
 
 int main(int argc, char *argv[])
 {

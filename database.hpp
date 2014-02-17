@@ -2,11 +2,15 @@
 
 namespace DB {
 typedef quint32 Word;
+typedef quint32 Index;
+typedef QList<Word> Row;
+typedef QList<QList<Word> > RowList;
+typedef QList<QPair<Index, QList<Word> > > IndexedRowList;
 
 enum Protocol_Names {TCP, DB_LSP_DISC, SSDP, SNMP};
 enum Columns {SourceIP, DestinationIP, Protocol, Length};
 
-const static QList<QList<Word> > RAW_PLAINTEXT = {
+const static QList<QList<Word> > database = {
     {0x6FDD4D9E, 0x81A14B33, TCP, 57},
     {0x81A14B33, 0x81A14BFF, DB_LSP_DISC, 195},
     {0x81A14B33, 0xFFFFFFFF, DB_LSP_DISC, 195},

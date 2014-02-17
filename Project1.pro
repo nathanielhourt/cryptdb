@@ -21,6 +21,6 @@ SOURCES += main.cpp \
     databaseclient.cpp
 
 HEADERS += \
-    raw_plaintext.hpp \
     databaseserver.hpp \
-    databaseclient.hpp
+    databaseclient.hpp \
+    database.hpp

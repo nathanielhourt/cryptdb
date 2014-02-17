@@ -3,7 +3,7 @@
 
 #include <QObject>
 
-#include "raw_plaintext.hpp"
+#include "database.hpp"
 
 class DatabaseServer : public QObject
 {
@@ -25,7 +25,7 @@ public:
      *
      * @return The next available index
      */
-    quint32 nextAvailableIndex();
+    DB::Index nextAvailableIndex();
 
     /**
      * @brief Adds a new row to the database
@@ -35,7 +35,7 @@ public:
      * properly encrypted already, and must have taken nextAvailableIndex() into
      * account.
      */
-    void appendRow(QList<DB::Word> newRow);
+    void appendRow(DB::Row newRow);
 
     /**
      * @brief Return all rows containing the specified word
@@ -49,9 +49,9 @@ public:
      * If column is less than -1 or greater than the highest column index, the
      * return value is QList<QList<quint32> >()
      *
-     * @return All rows containing the specified word
+     * @return Indexed lsit of all rows containing the specified word
      */
-    QList<QPair<quint32, QList<DB::Word> > > findRowsContaining(DB::Word word, qint8 column = -1);
+    DB::IndexedRowList findRowsContaining(DB::Word word, qint8 column = -1);
 signals:
 
 public slots:

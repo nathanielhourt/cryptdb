@@ -3,7 +3,7 @@
 
 #include <QObject>
 
-#include "raw_plaintext.hpp"
+#include "database.hpp"
 
 class DatabaseClient : public QObject
 {
@@ -21,18 +21,19 @@ public:
      *
      * @return The encrypted rows, which can be appended to the database
      */
-    QList<QList<DB::Word> > encryptNewRows(QList<QList<DB::Word> > newRows, quint32 nextAvailableIndex);
+    DB::RowList encryptNewRows(DB::RowList newRows, DB::Index nextAvailableIndex);
 
     /**
      * @brief Decrypt the encrypted crypticRows from the database server for reading
-     * @param crypticRows The encrypted rows from the database server, which are to be decrypted
+     * @param crypticRows The encrypted and indexed rows from the database server, which are to be
+     * decrypted
      *
-     * After making a query to the server, it will return a list of encrypted rows. This method will
-     * decrypt those rows and return them as plaintext.
+     * After making a query to the server, it will return an indexed list of encrypted rows. This method
+     * will decrypt those rows and return them as plaintext.
      *
      * @return A decrypted version of crypticRows
      */
-    QList<QPair<quint32, QList<DB::Word> > > decryptRows(QList<QList<DB::Word> > crypticRows);
+    DB::RowList decryptRows(DB::IndexedRowList crypticRows);
 
     /**
      * @brief Encrypts the word plainText for searching within the database server
