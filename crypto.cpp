@@ -74,7 +74,18 @@ QCA::SecureArray Crypto::arrayXor(QCA::SecureArray a, QCA::SecureArray b)
 
     return c;
 }
+/*
+ * Function returns the result of SHA1(k_i + Si)
+ */
+QCA::SecureArray Crypto::generateFki(QCA::SecureArray k_i, QCA::SecureArray Si)
+{
+    QCA::Hash hasher("sha1");
+    hasher.update(k_i);
+    hasher.update(Si);
+    QCA::SecureArray result = hasher.final();
 
+    return result.toByteArray().right(M_BYTES);
+} //end generateFki function
 
 const quint32 Crypto::N_BYTES = 4;
 const quint32 Crypto::M_BYTES = 1;
