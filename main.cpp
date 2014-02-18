@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
     Crypto crypt;
     int aa = 5;
     DB::Word test = QByteArray::fromRawData((char*)&aa,sizeof(int));
-    crypt.PreEncrypt(test);
+    crypt.preEncrypt(test);
 
     return 0;
 }

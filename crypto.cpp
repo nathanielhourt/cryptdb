@@ -20,7 +20,7 @@ QCA::SecureArray Crypto::generateKi(QCA::SecureArray kk, QCA::SecureArray Li)
     return result;
 }
 
-DB::Word Crypto::PreEncrypt(DB::Word wi) {
+DB::Word Crypto::preEncrypt(DB::Word wi) {
     //Setup AES Key and IV. Need to be deterministic.
     QCA::SymmetricKey akey(QCA::hexToArray("00000000000000000000000000000005"));
     QCA::InitializationVector iv(QCA::hexToArray("00000000000000000000000000000006"));
