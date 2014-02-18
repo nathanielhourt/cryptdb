@@ -36,5 +36,12 @@ int main(int argc, char *argv[])
     DB::Word text("test");
     QPair<DB::Word, QCA::SecureArray> send = alice.encryptWordForSearch(text);
 
+    DB::RowList rows;
+    foreach(QList<quint32> row, DB::database) {
+        rows.append(DB::Row());
+        foreach (quint32 entry, row)
+            rows.last().append(QByteArray::fromRawData((char*)&entry, sizeof(entry)));
+    }
+
     return 0;
 }
