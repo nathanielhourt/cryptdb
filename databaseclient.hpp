@@ -50,7 +50,7 @@ public:
      *
      * @return An encrypted version of plainText which the server can search the database for
      */
-    DB::Word encryptWordForSearch(DB::Word plainText);
+    QPair<DB::Word, QCA::SecureArray> encryptWordForSearch(DB::Word plainText);
 
 signals:
 

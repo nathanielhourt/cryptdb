@@ -29,14 +29,17 @@ DB::RowList DatabaseClient::encryptNewRows(DB::RowList newRows, DB::Index nextAv
     return crypticRows;
 }
 
-DB::Word DatabaseClient::encryptWordForSearch(DB::Word plainText)
+QPair<DB::Word, QCA::SecureArray> DatabaseClient::encryptWordForSearch(DB::Word plainText)
 {
     Crypto crypt;
     //Split word into X_i
-    DB::Word ctxt = crypt.preEncrypt(plainText);
+    QCA::SymmetricKey kDoublePrime(QCA::Random::randomArray(16));
+    QCA::SecureArray b = QCA::Random::randomArray(16);
+    QCA::InitializationVector iv(b);
+
+    DB::Word ctxt = crypt.preEncrypt(plainText, kDoublePrime, iv);
     QCA::SecureArray cipherText(ctxt);
     QCA::SecureArray k = crypt.generateKi(kPrime, cipherText);
 
-    cipherText.append(k);
-    return cipherText.toByteArray();
+    return QPair<DB::Word, QCA::SecureArray>(ctxt, k);
 } //end encryptWordForSearch function
