@@ -1,14 +1,15 @@
 #ifndef CRYPTO_H
 #define CRYPTO_H
 
-#include <QtCrypto>
+#include <QtCrypto/qca.h>
 
 #include "database.hpp"
 
 class Crypto
 {
-    explicit Crypto(){}
+
 public:
+    explicit Crypto(){}
     /**
      * @brief Generate an S_i value for the given index
      * @param ks The client's secret key for S values
@@ -30,6 +31,14 @@ public:
      * @return k_i for L_i using kk
      */
     static QCA::SecureArray generateKi(QCA::SecureArray kk, QCA::SecureArray Li);
+
+    /**
+     * @brief Pre-Encrypt a word before it is sent to the server.
+     * @param Wd the word to be encrypted
+     *
+     * @return X, the encrypted word.
+     */
+    DB::Word PreEncrypt(DB::Word wi);
 
 
 

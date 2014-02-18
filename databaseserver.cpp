@@ -1,4 +1,4 @@
-#include "databaseserver.h"
+#include "databaseserver.hpp"
 
 DatabaseServer::DatabaseServer(QObject *parent) :
     QObject(parent)
