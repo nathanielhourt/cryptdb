@@ -33,11 +33,8 @@ QPair<DB::Word, QCA::SecureArray> DatabaseClient::encryptWordForSearch(DB::Word 
 {
     Crypto crypt;
     //Split word into X_i
-    QCA::SymmetricKey kDoublePrime(QCA::Random::randomArray(16));
-    QCA::SecureArray b = QCA::Random::randomArray(16);
-    QCA::InitializationVector iv(b);
 
-    DB::Word ctxt = crypt.preEncrypt(plainText, kDoublePrime, iv);
+    DB::Word ctxt = crypt.preEncrypt(plainText, kPrimePrime, preEncryptIV);
     QCA::SecureArray cipherText(ctxt);
     QCA::SecureArray k = crypt.generateKi(kPrime, cipherText);
 
