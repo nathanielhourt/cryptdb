@@ -5,6 +5,7 @@ typedef QByteArray Word;
 typedef quint32 Index;
 typedef QList<Word> Row;
 typedef QList<QList<Word> > RowList;
+typedef QPair<Index, QList<Word> > IndexedRow;
 typedef QList<QPair<Index, QList<Word> > > IndexedRowList;
 
 enum Protocol_Names {TCP, DB_LSP_DISC, SSDP, SNMP};
