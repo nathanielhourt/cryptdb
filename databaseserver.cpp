@@ -11,3 +11,8 @@ quint32 DatabaseServer::nextAvailableIndex()
         return 0;
     return crypticDatabase.size() * crypticDatabase[0].size();
 }
+
+void DatabaseServer::appendRow(DB::Row newRow)
+{
+    crypticDatabase.append(newRow);
+} //end appendRow function
