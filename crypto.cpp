@@ -31,24 +31,17 @@ DB::Word Crypto::preEncrypt(DB::Word wi, QCA::SymmetricKey akey, QCA::Initializa
     qWarning() << "Clear: " << data.toByteArray().toHex();
     QCA::SecureArray encdata = cipher.process(data);
 
-    if(!cipher.ok()) {
-        printf("Error\n");
-    }
-    else {
-        printf("Encryption Ok\n");
-    }
-
     wi = encdata.toByteArray();
     return wi;
 }
 
-DB::Word Crypto::postDecrypt(DB::Word ctxt, QCA::SecureArray ks, DB::Index i, QCA::SecureArray kk, QCA::InitializationVector iv)
+DB::Word Crypto::postDecrypt(DB::Word ctxt, QCA::SecureArray akey, QCA::InitializationVector iv)
 {
-    QCA::SecureArray Si = generateS(ks, i);
-    QCA::SecureArray Li = arrayXor(Si, QCA::SecureArray(ctxt).toByteArray().right(N_BYTES - M_BYTES));
-    QCA::SecureArray ki = generateKi(kk, Li);
-
-    return preEncrypt(ctxt, ki, iv);
+    QCA::Cipher cipher(QString("aes128"),QCA::Cipher::CBC,
+                              QCA::Cipher::DefaultPadding,
+                              QCA::Decode,
+                              akey, iv);
+    return cipher.process(ctxt).toByteArray();
 } //end postDecrypt function
 
 /*

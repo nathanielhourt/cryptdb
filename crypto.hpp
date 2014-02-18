@@ -48,18 +48,14 @@ public:
     /**
      * @brief Post-Decrypt a word after it is returned from the server.
      * @param ctxt The word to be decrypted
-     * @param ks The key used to generate Si
-     * @param i The index i for generating Si
-     * @param kk The key used to generate ki
+     * @param akey The key to decrypt with
      * @param iv The iv used for decryption
      *
      * This function post-decrypts a database word after it is returned from the server.
-     * This function pre-encrypts a database word so that we can search the database without revealing to the server
-     * what word we are searching for. The word is encrypted using the provided key and IV.
      *
      * @return W, the decrypted.
      */
-    static DB::Word postDecrypt(DB::Word ctxt, QCA::SecureArray ks, DB::Index i, QCA::SecureArray kk, QCA::InitializationVector iv);
+    static DB::Word postDecrypt(DB::Word ctxt, QCA::SecureArray akey, QCA::InitializationVector iv);
     /**
      * @brief Generate a random string of bits given input and key k_i
      * @param k_i The key for the input function

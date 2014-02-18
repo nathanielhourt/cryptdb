@@ -14,6 +14,8 @@ private:
     QCA::InitializationVector preEncryptIV;
     QCA::SecureArray ks;
     QCA::SecureArray kk;
+
+    QCA::SecureArray generateTi(DB::Word word, DB::Index index);
 public:
     explicit DatabaseClient(QObject *parent = 0);
 
