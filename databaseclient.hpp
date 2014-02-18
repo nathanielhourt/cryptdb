@@ -10,6 +10,10 @@ class DatabaseClient : public QObject
     Q_OBJECT
 private:
     QCA::SecureArray kPrime;
+    QCA::SecureArray kPrimePrime;
+    QCA::InitializationVector preEncryptIV;
+    QCA::SecureArray ks;
+    QCA::SecureArray kk;
 public:
     explicit DatabaseClient(QObject *parent = 0);
 
