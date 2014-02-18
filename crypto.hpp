@@ -38,16 +38,16 @@ public:
      *
      * @return X, the encrypted word.
      */
-    DB::Word PreEncrypt(DB::Word wi);
+    DB::Word preEncrypt(DB::Word wi);
 
     /**
-	 * @brief Generate a random string of bits given input and key k_i
-	 * @param k_i The key for the input function
-	 * @param Si The value to be run through the function
-	 *
-	 * @return FKi F_k_i(S_i) given Si and k_i
-	 */
-	static QCA::SecureArray generateFki(QCA::SecureArray k_i, QCA::SecureArray Si);
+     * @brief Generate a random string of bits given input and key k_i
+     * @param k_i The key for the input function
+     * @param Si The value to be run through the function
+     *
+     * @return FKi F_k_i(S_i) given Si and k_i
+     */
+    static QCA::SecureArray generateFki(QCA::SecureArray k_i, QCA::SecureArray Si);
     /**
      * @brief Xors the two arrays
      * @param a First array to xor
