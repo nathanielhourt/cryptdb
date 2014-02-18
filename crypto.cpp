@@ -42,6 +42,15 @@ DB::Word Crypto::preEncrypt(DB::Word wi, QCA::SymmetricKey akey, QCA::Initializa
     return wi;
 }
 
+DB::Word Crypto::postDecrypt(DB::Word ctxt, QCA::SecureArray ks, DB::Index i, QCA::SecureArray kk, QCA::InitializationVector iv)
+{
+    QCA::SecureArray Si = generateS(ks, i);
+    QCA::SecureArray Li = arrayXor(Si, QCA::SecureArray(ctxt).toByteArray().right(N_BYTES - M_BYTES));
+    QCA::SecureArray ki = generateKi(kk, Li);
+
+    return preEncrypt(ctxt, ki, iv);
+} //end postDecrypt function
+
 /*
  * Function returns the result of SHA1(k_i + Si)
  */
