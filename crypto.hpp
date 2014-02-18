@@ -34,11 +34,16 @@ public:
 
     /**
      * @brief Pre-Encrypt a word before it is sent to the server.
-     * @param Wd the word to be encrypted
+     * @param wi the word to be encrypted
+     * @param akey The key to pre-encrypt with
+     * @param iv The IV to pre-encrypt with
+     *
+     * This function pre-encrypts a database word so that we can search the database without revealing to the server
+     * what word we are searching for. The word is encrypted using the provided key and IV.
      *
      * @return X, the encrypted word.
      */
-    DB::Word preEncrypt(DB::Word wi);
+    DB::Word preEncrypt(DB::Word wi, QCA::SymmetricKey akey, QCA::InitializationVector iv);
 
     /**
      * @brief Generate a random string of bits given input and key k_i

@@ -20,11 +20,7 @@ QCA::SecureArray Crypto::generateKi(QCA::SecureArray kk, QCA::SecureArray Li)
     return result;
 }
 
-DB::Word Crypto::preEncrypt(DB::Word wi) {
-    //Setup AES Key and IV. Need to be deterministic.
-    QCA::SymmetricKey akey(QCA::hexToArray("00000000000000000000000000000005"));
-    QCA::InitializationVector iv(QCA::hexToArray("00000000000000000000000000000006"));
-
+DB::Word Crypto::preEncrypt(DB::Word wi, QCA::SymmetricKey akey, QCA::InitializationVector iv) {
     QCA::Cipher cipher(QString("aes128"),QCA::Cipher::CBC,
                               // use Default padding, which is equivalent to PKCS7 for CBC
                               QCA::Cipher::DefaultPadding,
@@ -35,7 +31,6 @@ DB::Word Crypto::preEncrypt(DB::Word wi) {
     qWarning() << "Clear: " << data.toByteArray().toHex();
     QCA::SecureArray encdata = cipher.process(data);
 
-
     if(!cipher.ok()) {
         printf("Error\n");
     }
@@ -43,23 +38,7 @@ DB::Word Crypto::preEncrypt(DB::Word wi) {
         printf("Encryption Ok\n");
     }
 
-
     wi = encdata.toByteArray();
-/*
-    qWarning() << "Wi = " << wi.toHex();
-    cipher.setup( QCA::Decode, akey, iv );
-    QCA::SecureArray ctxt(wi);
-
-    qWarning() << "Ctxt: " << ctxt.toByteArray().toHex();
-    qWarning() << "EncData " << encdata.toByteArray().toHex();
-    QCA::SecureArray ptxt = cipher.process(encdata);
-
-    if(!cipher.ok()) {
-        qWarning() << "Error Decrypting";
-    }
-    qWarning() << "ptxt = " << ptxt.toByteArray().toHex();
-    printf("ptxt = %u\n",ptxt.toByteArray().toUInt());
-*/
     return wi;
 }
 
