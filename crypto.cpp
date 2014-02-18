@@ -63,17 +63,6 @@ DB::Word Crypto::preEncrypt(DB::Word wi) {
     return wi;
 }
 
-QCA::SecureArray Crypto::arrayXor(QCA::SecureArray a, QCA::SecureArray b)
-{
-    if (a.size() != b.size())
-        return QCA::SecureArray();
-
-    QCA::SecureArray c(a.size());
-    for (int i = 0; i < a.size(); ++i)
-        c[i] = a[i] ^ b[i];
-
-    return c;
-}
 /*
  * Function returns the result of SHA1(k_i + Si)
  */
@@ -85,7 +74,26 @@ QCA::SecureArray Crypto::generateFki(QCA::SecureArray k_i, QCA::SecureArray Si)
     QCA::SecureArray result = hasher.final();
 
     return result.toByteArray().right(M_BYTES);
-} //end generateFki function
+}
+
+bool Crypto::clientWordMatchesDatabaseWord(DB::Word clientWord, DB::Word databaseWord, QCA::SecureArray k_i)
+{
+    QByteArray ti = arrayXor(clientWord, databaseWord).toByteArray();
+    return generateFki(k_i, ti.left(N_BYTES - M_BYTES)) == ti.right(M_BYTES);
+}
+
+QCA::SecureArray Crypto::arrayXor(QCA::SecureArray a, QCA::SecureArray b)
+{
+    if (a.size() != b.size())
+        return QCA::SecureArray();
+
+    QCA::SecureArray c(a.size());
+    for (int i = 0; i < a.size(); ++i)
+        c[i] = a[i] ^ b[i];
+
+    return c;
+}
+
 
 const quint32 Crypto::N_BYTES = 4;
 const quint32 Crypto::M_BYTES = 1;

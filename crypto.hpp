@@ -48,6 +48,24 @@ public:
      * @return FKi F_k_i(S_i) given Si and k_i
      */
     static QCA::SecureArray generateFki(QCA::SecureArray k_i, QCA::SecureArray Si);
+
+    /**
+     * @brief Determine if a word from the client matches a word in the database
+     * @param clientWord A word from the client to search in the database
+     * @param databaseWord A word in the database to compare with clientWord
+     * @param k_i The key for clientWord, provided by the client
+     *
+     * When the server receives a word to search the database for, it will call this function for each database
+     * word it wishes to compare against. This function performs a probabilistic comparison of the words, and
+     * returns true if they appear to match.
+     *
+     * Note that while there is a probability of false-positive, this function is deterministic, so multiple
+     * calls with the same arguments will yield the same result.
+     *
+     * @return True if the words appear to match, false otherwise
+     */
+    static bool clientWordMatchesDatabaseWord(DB::Word clientWord, DB::Word databaseWord, QCA::SecureArray k_i);
+
     /**
      * @brief Xors the two arrays
      * @param a First array to xor
