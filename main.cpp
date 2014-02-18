@@ -6,6 +6,8 @@
 #include <cstdio>
 
 #include "database.hpp"
+#include "databaseclient.hpp"
+#include "databaseserver.hpp"
 #include "crypto.hpp"
 int main(int argc, char *argv[])
 {
@@ -33,6 +35,10 @@ int main(int argc, char *argv[])
     int aa = 5;
     DB::Word test = QByteArray::fromRawData((char*)&aa,sizeof(int));
     crypt.preEncrypt(test);
+
+    DatabaseClient alice;
+    DB::Word text("test");
+    DB::Word send = alice.encryptWordForSearch(text);
 
     return 0;
 }

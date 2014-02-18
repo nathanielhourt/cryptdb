@@ -4,10 +4,12 @@
 #include <QObject>
 
 #include "database.hpp"
-
+#include "crypto.hpp"
 class DatabaseClient : public QObject
 {
     Q_OBJECT
+private:
+    QCA::SecureArray kPrime;
 public:
     explicit DatabaseClient(QObject *parent = 0);
 
