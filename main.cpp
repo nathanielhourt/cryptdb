@@ -34,7 +34,7 @@ int main(int argc, char *argv[])
     Crypto crypt;
     DatabaseClient alice;
     DB::Word text("test");
-    DB::Word send = alice.encryptWordForSearch(text);
+    QPair<DB::Word, QCA::SecureArray> send = alice.encryptWordForSearch(text);
 
     return 0;
 }

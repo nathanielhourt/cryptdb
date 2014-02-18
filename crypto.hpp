@@ -43,7 +43,7 @@ public:
      *
      * @return X, the encrypted word.
      */
-    DB::Word preEncrypt(DB::Word wi, QCA::SymmetricKey akey, QCA::InitializationVector iv);
+    static DB::Word preEncrypt(DB::Word wi, QCA::SymmetricKey akey, QCA::InitializationVector iv);
 
     /**
      * @brief Generate a random string of bits given input and key k_i

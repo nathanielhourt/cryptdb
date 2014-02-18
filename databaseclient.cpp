@@ -22,7 +22,7 @@ DB::RowList DatabaseClient::encryptNewRows(DB::RowList newRows, DB::Index nextAv
             word = Crypto::preEncrypt(word, kPrimePrime, preEncryptIV);
             QCA::SecureArray ti = Crypto::generateS(ks, nextAvailableIndex++);
             ti.append(Crypto::generateFki(Crypto::generateKi(kk, word.left(Crypto::N_BYTES - Crypto::M_BYTES)), ti));
-            crypticRows.last().append(Crypto::arrayXor(word, ti));
+            crypticRows.last().append(Crypto::arrayXor(word, ti).toByteArray());
         }
     }
 
