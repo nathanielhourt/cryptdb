@@ -28,25 +28,12 @@ int main(int argc, char *argv[])
     QByteArray data;
     QDataStream datastream(&data, QIODevice::ReadWrite);
 
-    QCA::SymmetricKey key(16);
-    datastream << key.toByteArray();
-
-    QByteArray holder;
-    QDataStream str(data);
-    str >> holder;
-    QCA::SymmetricKey key2(holder);
-
-    if (key == key2)
-        printf("Good\n");
-    else
-        printf("Bad\n");
-
     Crypto crypt;
     DatabaseClient alice;
-    DB::Word text("test");
-    QPair<DB::Word, QCA::SecureArray> send = alice.encryptWordForSearch(text);
+    DatabaseServer bob;
     qDebug() << DB::database;
 
+    //Read in the database
     DB::RowList rows;
     foreach(QList<quint32> row, DB::database) {
         rows.append(DB::Row());
@@ -54,21 +41,6 @@ int main(int argc, char *argv[])
             rows.last().append(QByteArray((char*)&entry, sizeof(entry)));
         }
     }
-    DB::dumpDB(rows);
-    DB::RowList crypticRows = alice.encryptNewRows(rows, 0);
-    DB::dumpDB(crypticRows);
-
-    DB::IndexedRowList decryptableRows;
-    DB::Index i = 0; i-=4;
-    foreach (DB::Row row, crypticRows)
-        decryptableRows.append(QPair<DB::Index, DB::Row>(i += 4, row));
-    DB::RowList newRows = alice.decryptRows(decryptableRows);
-    DB::dumpDB(newRows);
-
-    if (rows == newRows)
-        printf("Good\n");
-    else
-        printf("Bad\n");
 
     return 0;
 }
