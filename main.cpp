@@ -63,6 +63,7 @@ int main(int argc, char *argv[])
     foreach (DB::Row row, crypticRows)
         decryptableRows.append(QPair<DB::Index, DB::Row>(i += 4, row));
     DB::RowList newRows = alice.decryptRows(decryptableRows);
+    DB::dumpDB(newRows);
 
     if (rows == newRows)
         printf("Good\n");

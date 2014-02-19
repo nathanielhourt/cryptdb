@@ -65,16 +65,19 @@ bool Crypto::clientWordMatchesDatabaseWord(DB::Word clientWord, DB::Word databas
 
 QCA::SecureArray Crypto::arrayXor(QCA::SecureArray a, QCA::SecureArray b)
 {
-    if (a.size() != b.size())
+    if (a.size() != b.size()) {
+        qDebug() << "Cannot XOR unequally sized arrays!";
         return QCA::SecureArray();
+    }
 
     QCA::SecureArray c(a.size());
     for (int i = 0; i < a.size(); ++i)
         c[i] = a[i] ^ b[i];
+    qDebug() << "XOR:" << a.toByteArray().toHex() << '^' << b.toByteArray().toHex() << '=' << c.toByteArray().toHex();
 
     return c;
 }
 
 
-const quint32 Crypto::N_BYTES = 4;
-const quint32 Crypto::M_BYTES = 1;
+const quint32 Crypto::N_BYTES = 16;
+const quint32 Crypto::M_BYTES = 4;

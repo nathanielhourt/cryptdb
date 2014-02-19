@@ -24,12 +24,16 @@ DatabaseClient::DatabaseClient(QObject *parent) :
 DB::RowList DatabaseClient::encryptNewRows(DB::RowList newRows, DB::Index nextAvailableIndex)
 {
     DB::RowList crypticRows;
+    qDebug() << "Encrypting new rows";
 
     foreach (DB::Row row, newRows) {
         crypticRows.append(DB::Row());
         foreach (DB::Word word, row) {
             word = Crypto::preEncrypt(word, kPrimePrime, preEncryptIV);
+            qDebug() << "Index" << nextAvailableIndex << "Pre-Encrypted word:" << word.toHex();
+            qDebug() << "T_i:" << generateTi(word, nextAvailableIndex).toByteArray().toHex();
             crypticRows.last().append(Crypto::arrayXor(word, generateTi(word, nextAvailableIndex++)).toByteArray());
+            qDebug() << "Final ciphertext:" << crypticRows.last().last().toHex();
         }
     }
 
@@ -39,14 +43,23 @@ DB::RowList DatabaseClient::encryptNewRows(DB::RowList newRows, DB::Index nextAv
 DB::RowList DatabaseClient::decryptRows(DB::IndexedRowList crypticRows)
 {
     DB::RowList plaintextRows;
+    qDebug() << "Decrypting rows";
 
     foreach(DB::IndexedRow row, crypticRows) {
         quint32 index = row.first;
+        qDebug() << "Decrypting row starting at index" << index;
         plaintextRows.append(DB::Row());
         foreach (DB::Word crypticWord, row.second) {
+            qDebug() << "Index" << index << "ciphertext:" << crypticWord.toHex();
+            qDebug() << "XORing" << crypticWord.left(Crypto::N_BYTES - Crypto::M_BYTES).toHex() << "with" << Crypto::generateS(ks, index).toByteArray().toHex();
             QCA::SecureArray word = Crypto::arrayXor(crypticWord.left(Crypto::N_BYTES - Crypto::M_BYTES), Crypto::generateS(ks, index));
-            word.append(Crypto::generateFki(Crypto::generateKi(kk, word), Crypto::generateS(ks, index++)));
-            plaintextRows.last().append(Crypto::postDecrypt(word.toByteArray(), kPrime, preEncryptIV));
+            qDebug() << "Got" << word.toByteArray().toHex();
+            qDebug() << "XORing" << Crypto::generateFki(Crypto::generateKi(kk, word), Crypto::generateS(ks, index)).toByteArray().toHex() << "with" << crypticWord.right(Crypto::M_BYTES).toHex();
+            word.append(Crypto::arrayXor(Crypto::generateFki(Crypto::generateKi(kk, word), Crypto::generateS(ks, index++)), crypticWord.right(Crypto::M_BYTES)));
+            qDebug() << "Got" << word.toByteArray().right(Crypto::M_BYTES).toHex();
+            qDebug() << "Pre-encrypted word:" << word.toByteArray().toHex();
+            plaintextRows.last().append(Crypto::postDecrypt(word.toByteArray(), kPrimePrime, preEncryptIV));
+            qDebug() << "Final plaintext:" << plaintextRows.last().last().toHex();
         }
     }
 
