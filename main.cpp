@@ -19,6 +19,26 @@ void DB::dumpDB(RowList db) {
     }
 }
 
+char* print_protocol(QByteArray protocol)
+{
+  quint32 proto_value = protocol.toHex().left(2).toUInt();
+  if(proto_value == DB::TCP)
+  {
+    return (char*)"TCP";
+  } //end if TCP
+  else if(proto_value == DB::DB_LSP_DISC) {
+    return (char*)"DB_LSP_DISC";
+  } //end else if DB_LSP_DISC
+  else if(proto_value == DB::SSDP)
+  {
+    return (char*)"SSDP";
+  } //end else if SSDP
+  else
+  {
+    return (char*)"SNMP";
+  } //end else SNMP
+} //end print_protocol
+
 int main(int argc, char *argv[])
 {
     QCA::Initializer init;
@@ -26,13 +46,9 @@ int main(int argc, char *argv[])
     QCoreApplication a(argc, argv);
     Q_UNUSED(a);
 
-<<<<<<< HEAD
     QByteArray data;
     QDataStream datastream(&data, QIODevice::ReadWrite);
 
-    Crypto crypt;
-=======
->>>>>>> abaadadd33cd2b7de8375320a152a1efd14fc4d1
     DatabaseClient alice;
     DatabaseServer bob;
     qDebug() << DB::database;
@@ -43,7 +59,6 @@ int main(int argc, char *argv[])
         rows.append(DB::Row());
         foreach (quint32 entry, row) {
             rows.last().append(QByteArray((char*)&entry, sizeof(entry)));
-<<<<<<< HEAD
         } //end for each entry in the row
     } //end for each row in the database
 
@@ -53,42 +68,18 @@ int main(int argc, char *argv[])
         bob.appendRow(row);
     } //end for each row in encrypted database
 
-    foreach(QList<quint32> row, DB::database) {
-        DB::Row tmp_row;
-        foreach (quint32 entry, row) {
-            tmp_row.append(QByteArray((char*)&entry, sizeof(entry)));
-        } //end for each byte array
-        bob.appendRow(tmp_row);
-    }
-=======
-        }
-    }
-
-    //Alice encrypts the database and sends it to Bob
-    DB::RowList enc_database = alice.encryptNewRows(rows, 0);
-    foreach(DB::Row row, enc_database)
-    {
-        bob.appendRow(row);
-    } //end for each row in encrypted database
-
     //Search for IP add 0x6FDD4D99E
     quint32 search_term = 0x81A14B33;
     QPair<DB::Word, QCA::SecureArray> search_pair = alice.encryptWordForSearch(QByteArray((char*) &search_term, sizeof(quint32)));
     DB::IndexedRowList found_pairs = bob.findRowsContaining(search_pair, -1);
     qDebug() << "Searched database for" << search_pair.first.toHex() << "and got" << found_pairs.size() << "matching rows.";
 
-    //Nothing is being returned here
     DB::RowList decrypted_found_pairs = alice.decryptRows(found_pairs);
-
-    foreach(DB::Row row, decrypted_found_pairs) {
-        foreach(DB::Word w, row) {
-            qDebug() << w.toHex();
-        } //end for print each entry in the row
-        printf("\n");
-    } //end for each in which search_term was found
-
-    found_pairs = bob.findRowsContaining(search_pair, 1);
     qDebug() << "Searched column 1 for" << search_pair.first.toHex() << "and got" << found_pairs.size() << "matching rows.";
->>>>>>> abaadadd33cd2b7de8375320a152a1efd14fc4d1
+    foreach(DB::Row row, decrypted_found_pairs) {
+      qDebug() << row[0].toHex() << ", " << row[1].toHex() << ", " << print_protocol(row[2]) << ", " << row[3].toHex();
+    } //end for each decrypted row
+    
+    //Decrypt results from found_pairs
     return 0;
-}
+} //end main
