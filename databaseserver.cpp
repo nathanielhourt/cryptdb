@@ -33,11 +33,11 @@ DB::IndexedRowList DatabaseServer::findRowsContaining(QPair<DB::Word, QCA::Secur
             }
         }
     }
-    else if ((column != -1) && (column < crypticDatabase.size())) {
-        for(int i = 0; i < crypticDatabase[column].size();i++) {
-            if(Crypto::clientWordMatchesDatabaseWord(clientword,crypticDatabase[column][i],k_i)) {
-                DB::Index index = (column * crypticDatabase[0].size()) + i;
-                retlist.append(QPair<DB::Index,QList<DB::Word> >(index,crypticDatabase[column]));
+    else if ((column != -1) && (column < crypticDatabase[0].size())) {
+        for(int i = 0; i < crypticDatabase.size();i++) {
+            if(Crypto::clientWordMatchesDatabaseWord(clientword,crypticDatabase[i][column],k_i)) {
+                DB::Index index = (i * crypticDatabase[0].size()) + column;
+                retlist.append(QPair<DB::Index,QList<DB::Word> >(index,crypticDatabase[i]));
             }
         }
     }
