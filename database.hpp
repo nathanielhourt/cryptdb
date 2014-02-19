@@ -10,7 +10,6 @@ typedef QList<QPair<Index, QList<Word> > > IndexedRowList;
 
 enum Protocol_Names {TCP, DB_LSP_DISC, SSDP, SNMP};
 enum Columns {SourceIP, DestinationIP, Protocol, Length};
-//Quick Fix so it actually compiles. Qlist<Word> --> Qlist<quint32>
 
 const static QList<QList<quint32> > database = {
     {0x6FDD4D9E, 0x81A14B33, TCP, 57},
@@ -28,4 +27,6 @@ const static QList<QList<quint32> > database = {
     {0x8D657494, 0x81A14B33, TCP, 54},
     {0x8D657494, 0x81A14B33, TCP, 66}
 };
+
+void dumpDB(RowList db);
 }

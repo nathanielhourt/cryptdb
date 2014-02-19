@@ -1,3 +1,5 @@
+#include <QDebug>
+
 #include "databaseclient.hpp"
 
 #include "crypto.hpp"
