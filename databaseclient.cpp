@@ -6,6 +6,7 @@
 
 QCA::SecureArray DatabaseClient::generateTi(DB::Word word, DB::Index index)
 {
+    qDebug() << "kk" << kk.toByteArray().toHex();
     QCA::SecureArray ti = Crypto::generateS(ks, index);
     ti.append(Crypto::generateFki(Crypto::generateKi(kk, word.left(Crypto::N_BYTES - Crypto::M_BYTES)), ti));
     return ti;
@@ -68,12 +69,9 @@ DB::RowList DatabaseClient::decryptRows(DB::IndexedRowList crypticRows)
 
 QPair<DB::Word, QCA::SecureArray> DatabaseClient::encryptWordForSearch(DB::Word plainText)
 {
-    Crypto crypt;
-    //Split word into X_i
-
-    DB::Word ctxt = crypt.preEncrypt(plainText, kPrimePrime, preEncryptIV);
+    DB::Word ctxt = Crypto::preEncrypt(plainText, kPrimePrime, preEncryptIV);
     QCA::SecureArray cipherText(ctxt);
-    QCA::SecureArray k = crypt.generateKi(kPrime, cipherText);
+    QCA::SecureArray k = Crypto::generateKi(kk, cipherText.toByteArray().left(Crypto::N_BYTES-Crypto::M_BYTES));
 
     return QPair<DB::Word, QCA::SecureArray>(ctxt, k);
 } //end encryptWordForSearch function

@@ -27,8 +27,8 @@ DB::IndexedRowList DatabaseServer::findRowsContaining(QPair<DB::Word, QCA::Secur
             for(int j = 0; j < crypticDatabase.at(i).size();j++) {
                 if (Crypto::clientWordMatchesDatabaseWord(clientword,crypticDatabase.at(i).at(j),k_i)) {
                     //Add current row to retlist.
-                    DB::Index index = (i * crypticDatabase[0].size()) + j;
-                    retlist.append(QPair<DB::Index,QList<DB::Word> >(index,crypticDatabase[i]));
+                    DB::Index rowStartIndex = (i * crypticDatabase[0].size());
+                    retlist.append(QPair<DB::Index,QList<DB::Word> >(rowStartIndex,crypticDatabase[i]));
                 }
             }
         }
@@ -36,7 +36,7 @@ DB::IndexedRowList DatabaseServer::findRowsContaining(QPair<DB::Word, QCA::Secur
     else if ((column != -1) && (column < crypticDatabase[0].size())) {
         for(int i = 0; i < crypticDatabase.size();i++) {
             if(Crypto::clientWordMatchesDatabaseWord(clientword,crypticDatabase[i][column],k_i)) {
-                DB::Index index = (i * crypticDatabase[0].size()) + column;
+                DB::Index index = (i * crypticDatabase[0].size());
                 retlist.append(QPair<DB::Index,QList<DB::Word> >(index,crypticDatabase[i]));
             }
         }

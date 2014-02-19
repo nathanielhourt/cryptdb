@@ -8,8 +8,8 @@
 class Crypto
 {
 
-public:
     explicit Crypto(){}
+public:
     /**
      * @brief Generate an S_i value for the given index
      * @param ks The client's secret key for S values
