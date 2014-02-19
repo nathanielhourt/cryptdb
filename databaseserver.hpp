@@ -2,7 +2,7 @@
 #define DATABASESERVER_H
 
 #include <QObject>
-
+#include <QtCrypto/qca.h>
 #include "database.hpp"
 
 class DatabaseServer : public QObject
@@ -51,7 +51,7 @@ public:
      *
      * @return Indexed lsit of all rows containing the specified word
      */
-    DB::IndexedRowList findRowsContaining(DB::Word word, qint8 column = -1);
+    DB::IndexedRowList findRowsContaining(QPair<DB::Word, QCA::SecureArray> search, qint8 column = -1);
 signals:
 
 public slots:
