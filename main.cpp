@@ -40,7 +40,8 @@ int main(int argc, char *argv[])
     foreach(QList<quint32> row, DB::database) {
         rows.append(DB::Row());
         foreach (quint32 entry, row)
-            rows.last().append(QByteArray::fromRawData((char*)&entry, sizeof(entry)));
+            rows.last().append(QByteArray((char*)&entry));
+            //rows.last().append(QByteArray::fromRawData((char*)&entry, sizeof(entry)));
     }
 
     return 0;
