@@ -33,6 +33,14 @@ DB::IndexedRowList DatabaseServer::findRowsContaining(QPair<DB::Word, QCA::Secur
             }
         }
     }
+    else if ((column != -1) && (column < crypticDatabase.size())) {
+        for(int i = 0; i < crypticDatabase[column].size();i++) {
+            if(Crypto::clientWordMatchesDatabaseWord(clientword,crypticDatabase[column][i],k_i)) {
+                DB::Index index = (column * crypticDatabase[0].size()) + i;
+                retlist.append(QPair<DB::Index,QList<DB::Word> >(index,crypticDatabase[column]));
+            }
+        }
+    }
 
     return retlist;
 }
