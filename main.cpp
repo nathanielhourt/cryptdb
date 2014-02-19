@@ -12,8 +12,8 @@
 #include "crypto.hpp"
 
 void DB::dumpDB(RowList db) {
-    foreach (Row r, db) {
-        foreach (Word w, r)
+    foreach (DB::Row r, db) {
+        foreach (DB::Word w, r)
             printf("%s ", w.toHex().data());
         printf ("\n");
     }
@@ -24,29 +24,13 @@ int main(int argc, char *argv[])
     QCA::Initializer init;
     Q_UNUSED(init);
     QCoreApplication a(argc, argv);
+    Q_UNUSED(a);
 
-    QByteArray data;
-    QDataStream datastream(&data, QIODevice::ReadWrite);
-
-    QCA::SymmetricKey key(16);
-    datastream << key.toByteArray();
-
-    QByteArray holder;
-    QDataStream str(data);
-    str >> holder;
-    QCA::SymmetricKey key2(holder);
-
-    if (key == key2)
-        printf("Good\n");
-    else
-        printf("Bad\n");
-
-    Crypto crypt;
     DatabaseClient alice;
-    DB::Word text("test");
-    QPair<DB::Word, QCA::SecureArray> send = alice.encryptWordForSearch(text);
+    DatabaseServer bob;
     qDebug() << DB::database;
 
+    //Read in the database
     DB::RowList rows;
     foreach(QList<quint32> row, DB::database) {
         rows.append(DB::Row());
@@ -54,21 +38,28 @@ int main(int argc, char *argv[])
             rows.last().append(QByteArray((char*)&entry, sizeof(entry)));
         }
     }
-    DB::dumpDB(rows);
-    DB::RowList crypticRows = alice.encryptNewRows(rows, 0);
-    DB::dumpDB(crypticRows);
 
-    DB::IndexedRowList decryptableRows;
-    DB::Index i = 0; i-=4;
-    foreach (DB::Row row, crypticRows)
-        decryptableRows.append(QPair<DB::Index, DB::Row>(i += 4, row));
-    DB::RowList newRows = alice.decryptRows(decryptableRows);
-    DB::dumpDB(newRows);
+    //Alice encrypts the database and sends it to Bob
+    DB::RowList enc_database = alice.encryptNewRows(rows, 0);
+    foreach(DB::Row row, enc_database)
+    {
+        bob.appendRow(row);
+    } //end for each row in encrypted database
 
-    if (rows == newRows)
-        printf("Good\n");
-    else
-        printf("Bad\n");
+    //Search for IP add 0x6FDD4D99E
+    quint32 search_term = 0x81A14B33;
+    QPair<DB::Word, QCA::SecureArray> search_pair = alice.encryptWordForSearch(QByteArray((char*) &search_term, sizeof(quint32)));
+    DB::IndexedRowList found_pairs = bob.findRowsContaining(search_pair, -1);
+    qDebug() << "Searched database for" << search_pair.first.toHex() << "and got" << found_pairs.size() << "matching rows.";
 
+    //Nothing is being returned here
+    DB::RowList decrypted_found_pairs = alice.decryptRows(found_pairs);
+
+    foreach(DB::Row row, decrypted_found_pairs) {
+        foreach(DB::Word w, row) {
+            qDebug() << w.toHex();
+        } //end for print each entry in the row
+        printf("\n");
+    } //end for each in which search_term was found
     return 0;
 }

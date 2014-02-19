@@ -9,11 +9,11 @@ class DatabaseClient : public QObject
 {
     Q_OBJECT
 private:
-    QCA::SecureArray kPrime;
-    QCA::SecureArray kPrimePrime;
-    QCA::InitializationVector preEncryptIV;
-    QCA::SecureArray ks;
-    QCA::SecureArray kk;
+    const QCA::SecureArray kPrime;
+    const QCA::SecureArray kPrimePrime;
+    const QCA::InitializationVector preEncryptIV;
+    const QCA::SecureArray ks;
+    const QCA::SecureArray kk;
 
     QCA::SecureArray generateTi(DB::Word word, DB::Index index);
 public:

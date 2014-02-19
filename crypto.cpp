@@ -17,6 +17,8 @@ QCA::SecureArray Crypto::generateKi(QCA::SecureArray kk, QCA::SecureArray Li)
     hasher.update(Li);
     QCA::SecureArray result = hasher.final();
 
+    qDebug() << "k_i from kk=" << kk.toByteArray().toHex() << "and Li=" << Li.toByteArray().toHex() << "is" << result.toByteArray().toHex();
+
     return result;
 }
 
@@ -73,7 +75,6 @@ QCA::SecureArray Crypto::arrayXor(QCA::SecureArray a, QCA::SecureArray b)
     QCA::SecureArray c(a.size());
     for (int i = 0; i < a.size(); ++i)
         c[i] = a[i] ^ b[i];
-    qDebug() << "XOR:" << a.toByteArray().toHex() << '^' << b.toByteArray().toHex() << '=' << c.toByteArray().toHex();
 
     return c;
 }
