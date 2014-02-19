@@ -42,5 +42,12 @@ int main(int argc, char *argv[])
         }
     }
 
+    foreach(QList<quint32> row, DB::database) {
+        DB::Row tmp_row;
+        foreach (quint32 entry, row) {
+            tmp_row.append(QByteArray((char*)&entry, sizeof(entry)));
+        } //end for each byte array
+        bob.appendRow(tmp_row);
+    }
     return 0;
 }
