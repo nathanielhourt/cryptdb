@@ -39,8 +39,14 @@ int main(int argc, char *argv[])
         rows.append(DB::Row());
         foreach (quint32 entry, row) {
             rows.last().append(QByteArray((char*)&entry, sizeof(entry)));
-        }
-    }
+        } //end for each entry in the row
+    } //end for each row in the database
+
+    //Alice encrypts the information and sends it to the server
+    DB::RowList enc_database = alice.encryptNewRows(rows, 0);
+    foreach(DB::Row row, enc_database){
+        bob.appendRow(row);
+    } //end for each row in encrypted database
 
     return 0;
 }
