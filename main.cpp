@@ -61,5 +61,8 @@ int main(int argc, char *argv[])
         } //end for print each entry in the row
         printf("\n");
     } //end for each in which search_term was found
+
+    found_pairs = bob.findRowsContaining(search_pair, 1);
+    qDebug() << "Searched column 1 for" << search_pair.first.toHex() << "and got" << found_pairs.size() << "matching rows.";
     return 0;
 }
