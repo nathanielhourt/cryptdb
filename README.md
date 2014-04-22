@@ -1,9 +1,22 @@
-# This is the README
+# Proof of Concept Database for an Untrusted Server
 
-Authors:
-	Samuel Rhody
-	Nathan Hourt
-	Patrick Biernat
+This project demonstrates a database in which all the server sees is ciphertexts. The clients
+have keys to their data, and can provide the server with sufficient data to perform various
+queries on the data and returning results without actually knowing the plaintext of the data
+searched.
+
+This database is based on the work presented in this paper:
+http://www.cs.berkeley.edu/~dawnsong/papers/se.pdf
+
+Original Authors (up to commit 151cb350225932ff35210ba3e8eca893faff4eee):
+ * Samuel Rhody
+ * Nathan Hourt
+ * Patrick Biernat
+
+All code since commit 151cb350225932ff35210ba3e8eca893faff4eee is the work of:
+ * Nathan Hourt
+ * Jennifer Karkoska
+ * Mike Moore
 	
 Default Parameters:
 	Set m = 8
