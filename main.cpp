@@ -46,9 +46,6 @@ int main(int argc, char *argv[])
     QCoreApplication a(argc, argv);
     Q_UNUSED(a);
 
-    QByteArray data;
-    QDataStream datastream(&data, QIODevice::ReadWrite);
-
     DatabaseClient alice;
     DatabaseServer bob;
     qDebug() << DB::database;
