@@ -1,7 +1,7 @@
 #include <QCoreApplication>
 #include <QDebug>
 
-#include <QtCrypto/qca.h>
+#include <QtCrypto>
 #include <QTextStream>
 
 #include <cstdio>

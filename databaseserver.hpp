@@ -2,7 +2,7 @@
 #define DATABASESERVER_H
 
 #include <QObject>
-#include <QtCrypto/qca.h>
+#include <QtCrypto>
 #include "database.hpp"
 
 class DatabaseServer : public QObject

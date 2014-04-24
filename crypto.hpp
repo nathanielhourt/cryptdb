@@ -1,7 +1,7 @@
 #ifndef CRYPTO_H
 #define CRYPTO_H
 
-#include <QtCrypto/qca.h>
+#include <QtCrypto>
 
 #include "database.hpp"
 
