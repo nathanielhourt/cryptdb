@@ -4,9 +4,9 @@ namespace DB {
 typedef QByteArray Word;
 typedef quint32 Index;
 typedef QList<Word> Row;
-typedef QList<QList<Word> > RowList;
-typedef QPair<Index, QList<Word> > IndexedRow;
-typedef QList<QPair<Index, QList<Word> > > IndexedRowList;
+typedef QList<Row> RowList;
+typedef QPair<Index, Row> IndexedRow;
+typedef QList<IndexedRow> IndexedRowList;
 
 enum Protocol_Names {TCP, DB_LSP_DISC, SSDP, SNMP};
 enum Columns {SourceIP, DestinationIP, Protocol, Length};
