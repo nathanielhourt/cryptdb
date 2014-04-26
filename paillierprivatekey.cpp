@@ -24,14 +24,14 @@ PaillierPrivateKey::~PaillierPrivateKey()
     delete pub;
 }
 
-PaillierPublicKey PaillierPrivateKey::derivePublicKey()
+PaillierPublicKey PaillierPrivateKey::derivePublicKey() const
 {
     if (pub == nullptr)
         pub = new PaillierPublicKey(n,g);
     return *pub;
 }
 
-QCA::BigInteger PaillierPrivateKey::decrypt(QCA::BigInteger cipher)
+QCA::BigInteger PaillierPrivateKey::decrypt(QCA::BigInteger cipher) const
 {
     return ((ModularMath::modexp(cipher, l, n2)-1)/n)*mu % n;
 }

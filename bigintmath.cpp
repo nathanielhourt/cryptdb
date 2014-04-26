@@ -46,3 +46,13 @@ QCA::BigInteger randomInRange(const QCA::BigInteger &min, const QCA::BigInteger 
     //rand is now in [0,max-min); shift it up to [min, max)
     return rand + min;
 }
+
+
+QCA::SecureArray randomBytes(unsigned int numBytes, QCA::SecureArray seed)
+{
+    gmp_randclass rng(gmp_randinit_default);
+    rng.seed(mpz_class(QCA::BigInteger(seed).toString().toLocal8Bit().data()));
+    QCA::SecureArray result = QCA::BigInteger(mpz_class(rng.get_z_bits(numBytes*8 + 1)).get_str().c_str()).toArray();
+    result.resize(numBytes);
+    return result;
+}

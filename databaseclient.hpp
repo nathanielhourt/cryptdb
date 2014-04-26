@@ -5,12 +5,14 @@
 
 #include "database.hpp"
 #include "crypto.hpp"
+#include "paillierprivatekey.hpp"
+
 class DatabaseClient : public QObject
 {
     Q_OBJECT
 private:
     const QCA::SecureArray kPrime;
-    const QCA::SecureArray kPrimePrime;
+    const PaillierPrivateKey kPrimePrime;
     const QCA::InitializationVector preEncryptIV;
     const QCA::SecureArray ks;
     const QCA::SecureArray kk;

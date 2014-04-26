@@ -5,6 +5,7 @@
 
 
 #include "database.hpp"
+#include "paillierprivatekey.hpp"
 
 class Crypto
 {
@@ -44,7 +45,7 @@ public:
      *
      * @return X, the encrypted word.
      */
-    static DB::Word preEncrypt(DB::Word wi, QCA::SymmetricKey akey, QCA::InitializationVector iv);
+    static DB::Word preEncrypt(DB::Word wi, PaillierPublicKey key);
 
     /**
      * @brief Post-Decrypt a word after it is returned from the server.
@@ -56,7 +57,7 @@ public:
      *
      * @return W, the decrypted.
      */
-    static DB::Word postDecrypt(DB::Word ctxt, QCA::SecureArray akey, QCA::InitializationVector iv);
+    static DB::Word postDecrypt(DB::Word ctxt, const PaillierPrivateKey &key);
     /**
      * @brief Generate a random string of bits given input and key k_i
      * @param k_i The key for the input function

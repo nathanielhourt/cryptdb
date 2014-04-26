@@ -80,17 +80,5 @@ int main(int argc, char *argv[])
     } //end for each decrypted row
 
     //Decrypt results from found_pairs
-
-    qDebug() << "\n\n\n\n\nLet's test some Paillier!";
-    PaillierPrivateKey prk;
-    PaillierPublicKey puk = prk.derivePublicKey();
-
-    QCA::BigInteger ctxt = puk.encrypt(100);
-    qDebug() << "Encrypted 100:" << ctxt.toString();
-    qDebug() << "Decrypted:" << prk.decrypt(ctxt).toString();
-
-    qDebug() << "101:" << prk.decrypt(puk.increment(ctxt)).toString();
-    qDebug() << "100:" << prk.decrypt(puk.mutate(ctxt)).toString();
-    qDebug() << "200:" << prk.decrypt(puk.add(ctxt, ctxt)).toString();
     return 0;
 } //end main

@@ -15,10 +15,10 @@ PaillierPublicKey::PaillierPublicKey(QCA::BigInteger num, QCA::BigInteger gen)
 
 QCA::BigInteger PaillierPublicKey::encrypt(QCA::BigInteger msg)
 {
-    QCA::BigInteger rand = randomInRange(1, n);
+//    QCA::BigInteger rand = randomInRange(1, n);
 
     QCA::BigInteger step1 = ModularMath::modexp(g,msg,n2);
-    QCA::BigInteger step2 = ModularMath::modexp(rand,n,n2);
+    QCA::BigInteger step2 = ModularMath::modexp(500,n,n2);
 
     return  (step1 * step2) % n2;
 }

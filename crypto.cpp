@@ -1,4 +1,8 @@
 #include "crypto.hpp"
+#include "paillierprivatekey.hpp"
+#include "bigintmath.hpp"
+
+#include <gmpxx.h>
 #include <QDebug>
 
 QCA::SecureArray Crypto::generateS(QCA::SecureArray ks, DB::Index i) {
@@ -7,7 +11,8 @@ QCA::SecureArray Crypto::generateS(QCA::SecureArray ks, DB::Index i) {
     hasher.update((char*)&i, sizeof(i));
     QCA::SecureArray result = hasher.final();
 
-    return result.toByteArray().right(N_BYTES - M_BYTES);
+    //We need a lot more bits than any hashing algorithm gives. Use the hash to seed an RNG
+    return randomBytes(N_BYTES-M_BYTES, result);
 }
 
 QCA::SecureArray Crypto::generateKi(QCA::SecureArray kk, QCA::SecureArray Li)
@@ -17,34 +22,20 @@ QCA::SecureArray Crypto::generateKi(QCA::SecureArray kk, QCA::SecureArray Li)
     hasher.update(Li);
     QCA::SecureArray result = hasher.final();
 
-    qDebug() << "k_i from kk=" << kk.toByteArray().toHex() << "and Li=" << Li.toByteArray().toHex() << "is" << result.toByteArray().toHex();
-
     return result;
 }
 
-DB::Word Crypto::preEncrypt(DB::Word wi, QCA::SymmetricKey akey, QCA::InitializationVector iv) {
-    QCA::Cipher cipher(QString("aes128"),QCA::Cipher::CBC,
-                              // use Default padding, which is equivalent to PKCS7 for CBC
-                              QCA::Cipher::DefaultPadding,
-                              // this object will encrypt
-                              QCA::Encode,
-                              akey, iv);
-    QCA::SecureArray data(wi);
-    qWarning() << "Clear: " << data.toByteArray().toHex();
-    QCA::SecureArray encdata = cipher.process(data);
-
-    wi = encdata.toByteArray();
-    return wi;
+DB::Word Crypto::preEncrypt(DB::Word wi, PaillierPublicKey key) {
+    DB::Word ctxt = key.encrypt(QCA::SecureArray(wi)).toArray().toByteArray();
+    if (unsigned(ctxt.size()) < N_BYTES)
+        ctxt.prepend(DB::Word(N_BYTES - ctxt.size(), '\0'));
+    return ctxt;
 }
 
-DB::Word Crypto::postDecrypt(DB::Word ctxt, QCA::SecureArray akey, QCA::InitializationVector iv)
+DB::Word Crypto::postDecrypt(DB::Word ctxt, const PaillierPrivateKey &key)
 {
-    QCA::Cipher cipher(QString("aes128"),QCA::Cipher::CBC,
-                              QCA::Cipher::DefaultPadding,
-                              QCA::Decode,
-                              akey, iv);
-    return cipher.process(ctxt).toByteArray();
-} //end postDecrypt function
+    return key.decrypt(QCA::SecureArray(ctxt)).toArray().toByteArray();
+}
 
 /*
  * Function returns the result of SHA1(k_i + Si)
@@ -56,7 +47,7 @@ QCA::SecureArray Crypto::generateFki(QCA::SecureArray k_i, QCA::SecureArray Si)
     hasher.update(Si);
     QCA::SecureArray result = hasher.final();
 
-    return result.toByteArray().right(M_BYTES);
+    return randomBytes(M_BYTES, result);
 }
 
 bool Crypto::clientWordMatchesDatabaseWord(DB::Word clientWord, DB::Word databaseWord, QCA::SecureArray k_i)
@@ -68,7 +59,7 @@ bool Crypto::clientWordMatchesDatabaseWord(DB::Word clientWord, DB::Word databas
 QCA::SecureArray Crypto::arrayXor(QCA::SecureArray a, QCA::SecureArray b)
 {
     if (a.size() != b.size()) {
-        qDebug() << "Cannot XOR unequally sized arrays!";
+        qDebug() << "Cannot XOR unequally sized arrays! Sizes:" << a.size() << b.size();
         return QCA::SecureArray();
     }
 
@@ -80,5 +71,5 @@ QCA::SecureArray Crypto::arrayXor(QCA::SecureArray a, QCA::SecureArray b)
 }
 
 
-const quint32 Crypto::N_BYTES = 16;
-const quint32 Crypto::M_BYTES = 4;
+const quint32 Crypto::N_BYTES = 257;
+const quint32 Crypto::M_BYTES = 51;

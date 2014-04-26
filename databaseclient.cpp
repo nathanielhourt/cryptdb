@@ -6,7 +6,6 @@
 
 QCA::SecureArray DatabaseClient::generateTi(DB::Word word, DB::Index index)
 {
-    qDebug() << "kk" << kk.toByteArray().toHex();
     QCA::SecureArray ti = Crypto::generateS(ks, index);
     ti.append(Crypto::generateFki(Crypto::generateKi(kk, word.left(Crypto::N_BYTES - Crypto::M_BYTES)), ti));
     return ti;
@@ -15,7 +14,6 @@ QCA::SecureArray DatabaseClient::generateTi(DB::Word word, DB::Index index)
 DatabaseClient::DatabaseClient(QObject *parent) :
     QObject(parent),
     kPrime(QCA::Random::randomArray(16)),
-    kPrimePrime(QCA::Random::randomArray(16)),
     preEncryptIV(QCA::Random::randomArray(16)),
     ks(QCA::Random::randomArray(16)),
     kk(QCA::Random::randomArray(16))
@@ -30,10 +28,9 @@ DB::RowList DatabaseClient::encryptNewRows(DB::RowList newRows, DB::Index nextAv
     foreach (DB::Row row, newRows) {
         crypticRows.append(DB::Row());
         foreach (DB::Word word, row) {
-            word = Crypto::preEncrypt(word, kPrimePrime, preEncryptIV);
-            qDebug() << "Index" << nextAvailableIndex << "Pre-Encrypted word:" << word.toHex();
-            qDebug() << "T_i:" << generateTi(word, nextAvailableIndex).toByteArray().toHex();
-            crypticRows.last().append(Crypto::arrayXor(word, generateTi(word, nextAvailableIndex++)).toByteArray());
+            word = Crypto::preEncrypt(word, kPrimePrime.derivePublicKey());
+            QCA::SecureArray ti = generateTi(word, nextAvailableIndex++);
+            crypticRows.last().append(Crypto::arrayXor(word, ti).toByteArray());
             qDebug() << "Final ciphertext:" << crypticRows.last().last().toHex();
         }
     }
@@ -59,7 +56,7 @@ DB::RowList DatabaseClient::decryptRows(DB::IndexedRowList crypticRows)
             word.append(Crypto::arrayXor(Crypto::generateFki(Crypto::generateKi(kk, word), Crypto::generateS(ks, index++)), crypticWord.right(Crypto::M_BYTES)));
             qDebug() << "Got" << word.toByteArray().right(Crypto::M_BYTES).toHex();
             qDebug() << "Pre-encrypted word:" << word.toByteArray().toHex();
-            plaintextRows.last().append(Crypto::postDecrypt(word.toByteArray(), kPrimePrime, preEncryptIV));
+            plaintextRows.last().append(Crypto::postDecrypt(word.toByteArray(), kPrimePrime));
             qDebug() << "Final plaintext:" << plaintextRows.last().last().toHex();
         }
     }
@@ -69,7 +66,7 @@ DB::RowList DatabaseClient::decryptRows(DB::IndexedRowList crypticRows)
 
 QPair<DB::Word, QCA::SecureArray> DatabaseClient::encryptWordForSearch(DB::Word plainText)
 {
-    DB::Word ctxt = Crypto::preEncrypt(plainText, kPrimePrime, preEncryptIV);
+    DB::Word ctxt = Crypto::preEncrypt(plainText, kPrimePrime.derivePublicKey());
     QCA::SecureArray cipherText(ctxt);
     QCA::SecureArray k = Crypto::generateKi(kk, cipherText.toByteArray().left(Crypto::N_BYTES-Crypto::M_BYTES));
 

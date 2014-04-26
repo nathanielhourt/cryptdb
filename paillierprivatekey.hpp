@@ -14,15 +14,15 @@ private:
     QCA::BigInteger l;
     QCA::BigInteger mu;
     QCA::BigInteger g;
-    PaillierPublicKey *pub;
+    mutable PaillierPublicKey *pub;
 
 public:
     PaillierPrivateKey(unsigned int bits = 1024);
     ~PaillierPrivateKey();
 
-    PaillierPublicKey derivePublicKey();
+    PaillierPublicKey derivePublicKey() const;
 
-    QCA::BigInteger decrypt(QCA::BigInteger cipher);
+    QCA::BigInteger decrypt(QCA::BigInteger cipher) const;
 };
 
 #endif // PAILLIERPRIVATEKEY_H
