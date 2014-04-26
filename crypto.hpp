@@ -3,6 +3,7 @@
 
 #include <QtCrypto>
 
+
 #include "database.hpp"
 
 class Crypto

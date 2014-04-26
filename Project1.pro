@@ -19,11 +19,18 @@ CONFIG  += crypto c++11
 SOURCES += main.cpp \
     databaseserver.cpp \
     databaseclient.cpp \
-    crypto.cpp
+    crypto.cpp \
+    paillierprivatekey.cpp \
+    paillierpublickey.cpp
 
 HEADERS += \
     databaseserver.hpp \
     databaseclient.hpp \
     database.hpp \
-    crypto.hpp
+    crypto.hpp \
+    paillierprivatekey.h \
+    paillierpublickey.h
 
+osx: INCLUDEPATH += /opt/local/include
+osx: QMAKE_CXXFLAGS += /opt/local/lib/libgmp.dylib
+linux|win32: LIBS += -lgmp
