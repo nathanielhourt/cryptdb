@@ -4,43 +4,7 @@
 
 #include "paillierprivatekey.hpp"
 #include "modularmath.hpp"
-
-/*
-    Couldn't think of a better place to put the overloaded operators for
-    BigInteger. Not opposed to these being relocated.
-*/
-
-QCA::BigInteger operator-(const QCA::BigInteger &a, const QCA::BigInteger &b)
-{
-    QCA::BigInteger c(a);
-    c -= b;
-    return c;
-}
-
-QCA::BigInteger operator/(const QCA::BigInteger &a, const QCA::BigInteger &b)
-{
-    QCA::BigInteger c(a);
-    c /= b;
-    return c;
-}
-
-QCA::BigInteger operator*(const QCA::BigInteger &a, const QCA::BigInteger &b)
-{
-    QCA::BigInteger c(a);
-    c *= b;
-    return c;
-}
-
-QCA::BigInteger operator+(const QCA::BigInteger &a, const QCA::BigInteger &b)
-{
-    QCA::BigInteger c(a);
-    c += b;
-    return c;
-}
-
-// End Overloaded BigInteger operators
-
-// Begin paillierprivatekey def's
+#include "bigintmath.hpp"
 
 PaillierPrivateKey::PaillierPrivateKey():
     pub(nullptr)
