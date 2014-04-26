@@ -37,4 +37,4 @@ HEADERS += \
 
 osx: INCLUDEPATH += /opt/local/include
 osx: QMAKE_CXXFLAGS += /opt/local/lib/libgmp.dylib
-linux|win32: LIBS += -lgmp
+unix|win32: LIBS += -lgmp
