@@ -10,6 +10,8 @@
 #include "databaseclient.hpp"
 #include "databaseserver.hpp"
 #include "crypto.hpp"
+#include "bigintmath.hpp"
+#include "paillierprivatekey.hpp"
 
 void DB::dumpDB(RowList db) {
     foreach (DB::Row r, db) {
@@ -76,7 +78,15 @@ int main(int argc, char *argv[])
     foreach(DB::Row row, decrypted_found_pairs) {
       qDebug() << row[0].toHex() << ", " << row[1].toHex() << ", " << print_protocol(row[2]) << ", " << row[3].toHex();
     } //end for each decrypted row
-    
+
     //Decrypt results from found_pairs
+
+    qDebug() << "\n\n\n\n\nLet's test some Paillier!";
+    PaillierPrivateKey prk;
+    PaillierPublicKey puk = prk.derivePublicKey();
+
+    QCA::BigInteger ctxt = puk.encrypt(100);
+    qDebug() << "Encrypted 100:" << ctxt.toString();
+
     return 0;
 } //end main

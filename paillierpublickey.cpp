@@ -1,4 +1,4 @@
-#include <gmpxx.h>
+#include <QDebug>
 
 #include "modularmath.hpp"
 #include "paillierpublickey.hpp"
@@ -9,15 +9,14 @@ PaillierPublicKey::PaillierPublicKey(QCA::BigInteger num, QCA::BigInteger gen)
     n = num;
     g = gen;
     n_sq = n*n;
+
+    qDebug() << "Created public key; n:" << n.toString() << "and g:" << g.toString();
 }
 
 QCA::BigInteger PaillierPublicKey::encrypt(QCA::BigInteger msg)
 {
-    gmp_randclass rng(gmp_randinit_default);
-    rng.seed(mpz_class(QCA::BigInteger(QCA::Random::randomArray(32)).toString().toLocal8Bit().data()));
-    QCA::BigInteger rand = mpz_class(rng.get_z_range(mpz_class((n-2).toString().toLocal8Bit().data()))).get_str().c_str();
-    //rand is now in [0,n-1); shift it up to [1, n)
-    rand += 1;
+    QCA::BigInteger rand = randomInRange(1, n);
+    qDebug() << "Encrypting with random number" << rand.toString();
 
     QCA::BigInteger step1 = ModularMath::modexp(g,msg,n_sq);
     QCA::BigInteger step2 = ModularMath::modexp(rand,n,n_sq);

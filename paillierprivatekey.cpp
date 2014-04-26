@@ -14,7 +14,7 @@ PaillierPrivateKey::PaillierPrivateKey(unsigned int bits):
     q = delegate.q();
     n = delegate.n();
     l = (p-1) * (q-1);
-    g = n += 1;
+    g = randomInRange(1, n*n);
     mu = ModularMath::invmod(l,g);
 }
 
