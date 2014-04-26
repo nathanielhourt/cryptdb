@@ -6,12 +6,13 @@
 #include "modularmath.hpp"
 #include "bigintmath.hpp"
 
-PaillierPrivateKey::PaillierPrivateKey():
+PaillierPrivateKey::PaillierPrivateKey(unsigned int bits):
     pub(nullptr)
 {
-    p = QCA::KeyGenerator().createRSA(1024).toRSA().p();
-    q = QCA::KeyGenerator().createRSA(1024).toRSA().q();
-    n = QCA::KeyGenerator().createRSA(1024).toRSA().n();
+    QCA::RSAPrivateKey delegate = QCA::KeyGenerator().createRSA(bits).toRSA();
+    p = delegate.p();
+    q = delegate.q();
+    n = delegate.n();
     l = (p-1) * (q-1);
     g = n += 1;
     mu = ModularMath::invmod(l,g);

@@ -16,7 +16,7 @@ private:
     PaillierPublicKey *pub;
 
 public:
-    PaillierPrivateKey();
+    PaillierPrivateKey(unsigned int bits = 1024);
     ~PaillierPrivateKey();
 
     PaillierPublicKey derivePublicKey();
