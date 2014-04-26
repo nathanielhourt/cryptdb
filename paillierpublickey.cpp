@@ -1,6 +1,7 @@
-#include "paillierpublickey.h"
+#include "modularmath.hpp"
+#include "paillierpublickey.hpp"
 
-paillierpublickey::paillierpublickey(QCA::BigInteger num, QCA::BigInteger gen)
+PaillierPublicKey::PaillierPublicKey(QCA::BigInteger num, QCA::BigInteger gen)
 {
     n = num;
     g = gen;
@@ -8,7 +9,7 @@ paillierpublickey::paillierpublickey(QCA::BigInteger num, QCA::BigInteger gen)
 
 }
 
-QCA::BigInteger encrypt(QCA::BigInteger msg){
+QCA::BigInteger PaillierPublicKey::encrypt(QCA::BigInteger msg){
 
     /* Not sure about the best way to generate
      * a random number between (1, n) using
@@ -23,10 +24,12 @@ QCA::BigInteger encrypt(QCA::BigInteger msg){
         }
     };
 
-    QCA::BigInteger step1 = modexp(g,msg,n_sq);
-    QCA::BigInteger step2 = modexp(rand,n,n_sq);
+    QCA::BigInteger step1 = ModularMath::modexp(g,msg,n_sq);
+    QCA::BigInteger step2 = ModularMath::modexp(rand,n,n_sq);
 
-    QCA::BigInteger result = (step1*step2)%=n;
+    QCA::BigInteger result(step1);
+    result *= step2;
+    result %= n;
 
     return  result;
 

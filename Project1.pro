@@ -21,15 +21,17 @@ SOURCES += main.cpp \
     databaseclient.cpp \
     crypto.cpp \
     paillierprivatekey.cpp \
-    paillierpublickey.cpp
+    paillierpublickey.cpp \
+    modularmath.cpp
 
 HEADERS += \
     databaseserver.hpp \
     databaseclient.hpp \
     database.hpp \
     crypto.hpp \
-    paillierprivatekey.h \
-    paillierpublickey.h
+    modularmath.hpp \
+    paillierpublickey.hpp \
+    paillierprivatekey.hpp
 
 osx: INCLUDEPATH += /opt/local/include
 osx: QMAKE_CXXFLAGS += /opt/local/lib/libgmp.dylib
