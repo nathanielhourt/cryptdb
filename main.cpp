@@ -87,6 +87,6 @@ int main(int argc, char *argv[])
 
     QCA::BigInteger ctxt = puk.encrypt(100);
     qDebug() << "Encrypted 100:" << ctxt.toString();
-
+    qDebug() << "Decrypted:" << prk.decrypt(ctxt).toString();
     return 0;
 } //end main

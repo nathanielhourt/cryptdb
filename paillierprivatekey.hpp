@@ -10,6 +10,7 @@ private:
     QCA::BigInteger p;
     QCA::BigInteger q;
     QCA::BigInteger n;
+    QCA::BigInteger n2;
     QCA::BigInteger l;
     QCA::BigInteger mu;
     QCA::BigInteger g;
@@ -20,6 +21,8 @@ public:
     ~PaillierPrivateKey();
 
     PaillierPublicKey derivePublicKey();
+
+    QCA::BigInteger decrypt(QCA::BigInteger cipher);
 };
 
 #endif // PAILLIERPRIVATEKEY_H

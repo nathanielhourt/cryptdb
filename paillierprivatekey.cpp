@@ -13,9 +13,10 @@ PaillierPrivateKey::PaillierPrivateKey(unsigned int bits):
     p = delegate.p();
     q = delegate.q();
     n = delegate.n();
+    n2 = n*n;
     l = (p-1) * (q-1);
-    g = randomInRange(1, n*n);
-    mu = ModularMath::invmod(l,g);
+    g = randomInRange(1, n2);
+    mu = ModularMath::invmod((ModularMath::modexp(g, l, n2)-1)/n, n);
 }
 
 PaillierPrivateKey::~PaillierPrivateKey()
@@ -28,4 +29,9 @@ PaillierPublicKey PaillierPrivateKey::derivePublicKey()
     if (pub == nullptr)
         pub = new PaillierPublicKey(n,g);
     return *pub;
+}
+
+QCA::BigInteger PaillierPrivateKey::decrypt(QCA::BigInteger cipher)
+{
+    return ((ModularMath::modexp(cipher, l, n2)-1)/n)*mu % n;
 }
