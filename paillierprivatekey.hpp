@@ -14,9 +14,12 @@ private:
     QCA::BigInteger mu;
     QCA::BigInteger g;
     PaillierPublicKey *pub;
+
 public:
     PaillierPrivateKey();
     ~PaillierPrivateKey();
+
+    PaillierPublicKey derivePublicKey();
 };
 
 #endif // PAILLIERPRIVATEKEY_H

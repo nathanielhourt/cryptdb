@@ -51,11 +51,16 @@ PaillierPrivateKey::PaillierPrivateKey():
     l = (p-1) * (q-1);
     g = n += 1;
     mu = ModularMath::invmod(l,g);
-    pub = new PaillierPublicKey(n,g);
-
 }
 
 PaillierPrivateKey::~PaillierPrivateKey()
 {
     delete pub;
+}
+
+PaillierPublicKey PaillierPrivateKey::derivePublicKey()
+{
+    if (pub == nullptr)
+        pub = new PaillierPublicKey(n,g);
+    return *pub;
 }
