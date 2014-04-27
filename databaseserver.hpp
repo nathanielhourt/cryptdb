@@ -57,7 +57,7 @@ signals:
 public slots:
 
 private:
-    QList<QList<DB::Word> > crypticDatabase;
+    DB::RowList crypticDatabase;
 };
 
 #endif // DATABASESERVER_H
