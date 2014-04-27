@@ -61,6 +61,81 @@ int main(int argc, char *argv[])
     DatabaseClient alice;
     DatabaseServer bob;
 
+    QTextStream qin(stdin);
+    QTextStream qout(stdout);
+    QCA::BigInteger sourceIP;
+    QCA::BigInteger destIP;
+
+    int selection;
+    bool inputflag = 1;
+    while (inputflag != 0){
+        qout<< "Enter selection:"<<endl;
+        qout<< "1: SourceIP_Average_MSG_Len"<<endl;
+        qout<< "2: DestinationIP_Average_MSG_Len"<<endl;
+        qout<< "3: From_To_Total#ofMsgs"<<endl;
+        qout<< "4: Total_#of_Outbound_Msgs"<<endl;
+        qout<< "5: Total_#of_Inbound_Msgs"<<endl;
+        qout<< "6: Pearson_Corr_Coeff??"<<endl;
+        qout<< "0: Exit"<<endl;
+
+        qin >> selection;
+
+        if(selection == 0){
+            inputflag = 0;
+        }
+        if(selection == 1){
+            qout<<"Enter SourceIP Address"<<endl;
+            qin << sourceIP;
+            //Convert to hex?
+            //Check if input is valid
+            //Call Average_Msg_Len function
+        }
+        if(selection == 2){
+            qout<<"Enter DestinationIP Address"<<endl;
+            qin << destIP;
+            //Convert to hex?
+            //Check if input is valid
+            //Call Average_Msg_Len function
+        }
+        if(selection == 3){
+            qout<<"Enter SourceIP Address"<<endl;
+            qin << sourceIP;
+            //Convert to hex?
+            //Check if input is valid
+            qout<<"Enter DestinationIP Address"<<endl;
+            qin << destIP;
+            //Convert to hex?
+            //Check if input is valid
+            //Call From_to_Total_Msgs function
+        }
+        if(selection == 4){
+            qout<<"Enter SourceIP Address"<<endl;
+            qin << sourceIP;
+            //Convert to hex?
+            //Check if input is valid
+            //Call Total_Outbound_Msgs function
+        }
+        if(selection == 5){
+            qout<<"Enter DestinationIP Address"<<endl;
+            qin << destIP;
+            //Convert to hex?
+            //Check if input is valid
+            //Call Total_Inbound_Msgs function
+        }
+        if(selection == 6){
+            qout<<"Enter 1st IP address"<<endl;
+            qin << sourceIP;
+            //Convert to hex?
+            //Check validity
+            qout<<"Enter 2nd IP address"<<endl;
+            qin << destIP;
+            //Convert to hex
+            //Check validity
+            //Call Pearson_Corr_Coeff function?
+        }
+
+    }
+
     //Read in the database
     DB::RowList rows;
     foreach(QList<quint32> row, DB::database) {
