@@ -63,8 +63,8 @@ int main(int argc, char *argv[])
 
     QTextStream qin(stdin);
     QTextStream qout(stdout);
-    QCA::BigInteger sourceIP;
-    QCA::BigInteger destIP;
+    QString sourceIP;
+    QString destIP;
 
     int selection;
     bool inputflag = 1;
@@ -85,50 +85,50 @@ int main(int argc, char *argv[])
         }
         if(selection == 1){
             qout<<"Enter SourceIP Address"<<endl;
-            qin << sourceIP;
+            qin >> sourceIP;
             //Convert to hex?
             //Check if input is valid
             //Call Average_Msg_Len function
         }
         if(selection == 2){
             qout<<"Enter DestinationIP Address"<<endl;
-            qin << destIP;
+            qin >> destIP;
             //Convert to hex?
             //Check if input is valid
             //Call Average_Msg_Len function
         }
         if(selection == 3){
             qout<<"Enter SourceIP Address"<<endl;
-            qin << sourceIP;
+            qin >> sourceIP;
             //Convert to hex?
             //Check if input is valid
             qout<<"Enter DestinationIP Address"<<endl;
-            qin << destIP;
+            qin >> destIP;
             //Convert to hex?
             //Check if input is valid
             //Call From_to_Total_Msgs function
         }
         if(selection == 4){
             qout<<"Enter SourceIP Address"<<endl;
-            qin << sourceIP;
+            qin >> sourceIP;
             //Convert to hex?
             //Check if input is valid
             //Call Total_Outbound_Msgs function
         }
         if(selection == 5){
             qout<<"Enter DestinationIP Address"<<endl;
-            qin << destIP;
+            qin >> destIP;
             //Convert to hex?
             //Check if input is valid
             //Call Total_Inbound_Msgs function
         }
         if(selection == 6){
             qout<<"Enter 1st IP address"<<endl;
-            qin << sourceIP;
+            qin >> sourceIP;
             //Convert to hex?
             //Check validity
             qout<<"Enter 2nd IP address"<<endl;
-            qin << destIP;
+            qin >> destIP;
             //Convert to hex
             //Check validity
             //Call Pearson_Corr_Coeff function?
