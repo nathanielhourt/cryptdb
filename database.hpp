@@ -25,7 +25,7 @@ const static QList<QList<quint32> > database = {
     {0xA29FF2A5, 0x81A14B33, TCP, 66},
     {0xA29FF2A5, 0x81A14B33, TCP, 54},
     {0x8D657494, 0x81A14B33, TCP, 54},
-    {0x8D657494, 0x81A14B33, TCP, 66}
+    {0x8D657494, 0x81A14B33, TCP, 128}
 };
 
 void dumpDB(RowList db);

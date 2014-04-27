@@ -24,16 +24,20 @@ DB::RowList DatabaseClient::encryptNewRows(DB::RowList newRows, DB::Index nextAv
 {
     DB::RowList crypticRows;
     qDebug() << "Encrypting new rows";
+    int good = 0, bad = 0;
 
     foreach (DB::Row row, newRows) {
         crypticRows.append(DB::Row());
         foreach (DB::Word word, row) {
             word = Crypto::preEncrypt(word, kPrimePrime.derivePublicKey());
+            qDebug() << "Pre-encrypted word:" << word.toHex();
             QCA::SecureArray ti = generateTi(word, nextAvailableIndex++);
             crypticRows.last().append(Crypto::arrayXor(word, ti).toByteArray());
             qDebug() << "Final ciphertext:" << crypticRows.last().last().toHex();
         }
     }
+
+    qDebug() << "Good:" << good << "Bad:" << bad;
 
     return crypticRows;
 }

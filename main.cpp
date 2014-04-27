@@ -1,10 +1,9 @@
 #include <QCoreApplication>
 #include <QDebug>
-
 #include <QtCrypto>
 #include <QTextStream>
-
 #include <cstdio>
+#include <gmpxx.h>
 
 #include "database.hpp"
 #include "databaseclient.hpp"
@@ -57,7 +56,8 @@ int main(int argc, char *argv[])
     foreach(QList<quint32> row, DB::database) {
         rows.append(DB::Row());
         foreach (quint32 entry, row) {
-            rows.last().append(QByteArray((char*)&entry, sizeof(entry)));
+            mpz_class n(entry);
+            rows.last().append(QCA::BigInteger(n.get_str().c_str()).toArray().toByteArray());
         } //end for each entry in the row
     } //end for each row in the database
 
@@ -68,8 +68,8 @@ int main(int argc, char *argv[])
     } //end for each row in encrypted database
 
     //Search for IP add 0x6FDD4D99E
-    quint32 search_term = 0x81A14B33;
-    QPair<DB::Word, QCA::SecureArray> search_pair = alice.encryptWordForSearch(QByteArray((char*) &search_term, sizeof(quint32)));
+    mpz_class search_term = 0x81A14B33;
+    QPair<DB::Word, QCA::SecureArray> search_pair = alice.encryptWordForSearch(QCA::BigInteger(search_term.get_str().c_str()).toArray().toByteArray());
     DB::IndexedRowList found_pairs = bob.findRowsContaining(search_pair, -1);
     qDebug() << "Searched database for" << search_pair.first.toHex() << "and got" << found_pairs.size() << "matching rows.";
 
@@ -79,6 +79,5 @@ int main(int argc, char *argv[])
       qDebug() << row[0].toHex() << ", " << row[1].toHex() << ", " << print_protocol(row[2]) << ", " << row[3].toHex();
     } //end for each decrypted row
 
-    //Decrypt results from found_pairs
     return 0;
 } //end main

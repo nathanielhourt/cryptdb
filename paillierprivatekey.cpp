@@ -33,5 +33,5 @@ PaillierPublicKey PaillierPrivateKey::derivePublicKey() const
 
 QCA::BigInteger PaillierPrivateKey::decrypt(QCA::BigInteger cipher) const
 {
-    return ((ModularMath::modexp(cipher, l, n2)-1)/n)*mu % n;
+    return (((ModularMath::modexp(cipher, l, n2)-1)/n)*mu) % n;
 }
