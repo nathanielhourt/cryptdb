@@ -26,10 +26,15 @@ DB::RowList DatabaseClient::encryptNewRows(DB::RowList newRows, DB::Index nextAv
 
     foreach (DB::Row row, newRows) {
         crypticRows.append(DB::Row());
-        foreach (DB::Word word, row) {
-            word = Crypto::preEncrypt(word, kPrimePrime.derivePublicKey());
-            QCA::SecureArray ti = generateTi(word, nextAvailableIndex++);
-            crypticRows.last().append(Crypto::arrayXor(word, ti).toByteArray());
+        for (int c = 0; c != DB::EndColumns; ++c) {
+            DB::Word word = Crypto::preEncrypt(row[c], kPrimePrime.derivePublicKey());
+
+            if (DB::ComputableColumns.contains(DB::Columns(c))) {
+                crypticRows.last().append(word);
+            } else {
+                QCA::SecureArray ti = generateTi(word, nextAvailableIndex++);
+                crypticRows.last().append(Crypto::arrayXor(word, ti).toByteArray());
+            }
         }
     }
 
@@ -43,10 +48,16 @@ DB::RowList DatabaseClient::decryptRows(DB::IndexedRowList crypticRows)
     foreach(DB::IndexedRow row, crypticRows) {
         quint32 index = row.first;
         plaintextRows.append(DB::Row());
-        foreach (DB::Word crypticWord, row.second) {
-            QCA::SecureArray word = Crypto::arrayXor(crypticWord.left(Crypto::N_BYTES - Crypto::M_BYTES), Crypto::generateS(ks, index));
-            word.append(Crypto::arrayXor(Crypto::generateFki(Crypto::generateKi(kk, word), Crypto::generateS(ks, index++)), crypticWord.right(Crypto::M_BYTES)));
-            plaintextRows.last().append(Crypto::postDecrypt(word.toByteArray(), kPrimePrime));
+        for (int c = 0; c != DB::EndColumns; ++c) {
+            DB::Word crypticWord = row.second[c];
+
+            if (!DB::ComputableColumns.contains(DB::Columns(c))) {
+                QCA::SecureArray word = Crypto::arrayXor(crypticWord.left(Crypto::N_BYTES - Crypto::M_BYTES), Crypto::generateS(ks, index));
+                word.append(Crypto::arrayXor(Crypto::generateFki(Crypto::generateKi(kk, word), Crypto::generateS(ks, index++)), crypticWord.right(Crypto::M_BYTES)));
+                plaintextRows.last().append(Crypto::postDecrypt(word.toByteArray(), kPrimePrime));
+            } else {
+                plaintextRows.last().append(Crypto::postDecrypt(crypticWord, kPrimePrime));
+            }
         }
     }
 

@@ -30,14 +30,16 @@ DB::IndexedRowList DatabaseServer::findRowsContaining(DB::IndexedRowList rowsToS
     if(column == -1) {
         for(int i=0;i < rowsToSearch.size();i++) {
             for(int j = 0; j < rowsToSearch.at(i).second.size();j++) {
-                if (Crypto::clientWordMatchesDatabaseWord(clientword,rowsToSearch.at(i).second.at(j),k_i))
+                if (Crypto::clientWordMatchesDatabaseWord(clientword,rowsToSearch[i].second[j],k_i)
+                        || (DB::ComputableColumns.contains(DB::Columns(j)) && clientword == rowsToSearch[i].second[j]))
                     retlist.append(rowsToSearch[i]);
             }
         }
     }
     else if ((column != -1) && (column < rowsToSearch[0].second.size())) {
         for(int i = 0; i < rowsToSearch.size();i++) {
-            if(Crypto::clientWordMatchesDatabaseWord(clientword,rowsToSearch[i].second[column],k_i)) {
+            if(Crypto::clientWordMatchesDatabaseWord(clientword,rowsToSearch[i].second[column],k_i)
+                    || (DB::ComputableColumns.contains(DB::Columns(column)) && clientword == rowsToSearch[i].second[column])) {
                 retlist.append(rowsToSearch[i]);
             }
         }
@@ -59,4 +61,21 @@ DB::IndexedRowList DatabaseServer::findRowsContainingMultiple(QList<SearchTerm> 
 QCA::BigInteger DatabaseServer::numberOfRowsContainingMultiple(QList<DatabaseServer::SearchTerm> searchTerms, PaillierPublicKey key) const
 {
     return key.encrypt(findRowsContainingMultiple(searchTerms).size());
+}
+
+QPair<QCA::BigInteger, QCA::BigInteger> DatabaseServer::sumAndCountOfColumnInRowsContainingMultiple(QList<DatabaseServer::SearchTerm> searchTerms, DB::Columns column, PaillierPublicKey key) const
+{
+    if (!DB::ComputableColumns.contains(column)) {
+        qWarning("Cannot get sum of values in column %d!", column);
+        return QPair<QCA::BigInteger, QCA::BigInteger>(key.encrypt(0), key.encrypt(0));
+    }
+
+    DB::IndexedRowList results = findRowsContainingMultiple(searchTerms);
+    QCA::BigInteger sum = key.encrypt(0);
+    QCA::BigInteger count = key.encrypt(results.size());
+
+    foreach (DB::IndexedRow row, results)
+        sum = key.add(sum, QCA::BigInteger(QCA::SecureArray(row.second[column])));
+
+    return QPair<QCA::BigInteger, QCA::BigInteger>(sum, count);
 }
