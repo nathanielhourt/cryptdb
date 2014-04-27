@@ -29,4 +29,5 @@ const static QList<QList<quint32> > database = {
 };
 
 void dumpDB(RowList db);
+IndexedRowList RowListToIndexedRowList(RowList rows, quint8 startingIndex = 0);
 }

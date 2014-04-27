@@ -20,6 +20,17 @@ void DB::dumpDB(RowList db) {
     }
 }
 
+DB::IndexedRowList DB::RowListToIndexedRowList(DB::RowList rows, quint8 startingIndex) {
+    DB::IndexedRowList db;
+
+    foreach (DB::Row row, rows) {
+        db.append(DB::IndexedRow(startingIndex, row));
+        startingIndex += row.size();
+    }
+
+    return db;
+}
+
 char* print_protocol(QByteArray protocol)
 {
   quint32 proto_value = protocol.toHex().left(2).toUInt();

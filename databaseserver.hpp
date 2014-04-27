@@ -51,7 +51,13 @@ public:
      *
      * @return Indexed lsit of all rows containing the specified word
      */
-    DB::IndexedRowList findRowsContaining(QPair<DB::Word, QCA::SecureArray> search, qint8 column = -1);
+    DB::IndexedRowList findRowsContaining(QPair<DB::Word, QCA::SecureArray> search, qint8 column = -1) const;
+    /**
+     * @brief This is an overloaded function
+     * @param rowsToSearch A list of rows to search, instead of the entire database
+     * @return Rows in rowsToSearch which match the search word
+     */
+    DB::IndexedRowList findRowsContaining(DB::IndexedRowList rowsToSearch, QPair<DB::Word, QCA::SecureArray> search, qint8 column = -1) const;
 signals:
 
 public slots:
