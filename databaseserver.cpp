@@ -45,3 +45,18 @@ DB::IndexedRowList DatabaseServer::findRowsContaining(DB::IndexedRowList rowsToS
 
     return retlist;
 }
+
+DB::IndexedRowList DatabaseServer::findRowsContainingMultiple(QList<SearchTerm> searchTerms) const
+{
+    DB::IndexedRowList results = DB::RowListToIndexedRowList(crypticDatabase);
+
+    foreach (SearchTerm term, searchTerms)
+        results = findRowsContaining(results, term.first, term.second);
+
+    return results;
+}
+
+QCA::BigInteger DatabaseServer::numberOfRowsContainingMultiple(QList<DatabaseServer::SearchTerm> searchTerms, PaillierPublicKey key) const
+{
+    return key.encrypt(findRowsContainingMultiple(searchTerms).size());
+}

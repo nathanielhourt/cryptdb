@@ -9,16 +9,22 @@ PaillierPublicKey::PaillierPublicKey(QCA::BigInteger num, QCA::BigInteger gen)
     n = num;
     g = gen;
     n2 = n*n;
+}
 
-    qDebug() << "Created public key; n:" << n.toString() << "and g:" << g.toString();
+QCA::BigInteger PaillierPublicKey::getRandomNumber()
+{
+    //Number chosen based on atmospheric turbulence.
+    //Guaranteed to be random.
+    QCA::BigInteger random = "2392739600";
+
+    return random;
 }
 
 QCA::BigInteger PaillierPublicKey::encrypt(QCA::BigInteger msg)
 {
-//    QCA::BigInteger rand = randomInRange(1, n);
-
+    QCA::BigInteger random = getRandomNumber();
     QCA::BigInteger step1 = ModularMath::modexp(g,msg,n2);
-    QCA::BigInteger step2 = ModularMath::modexp(500,n,n2);
+    QCA::BigInteger step2 = ModularMath::modexp(random,n,n2);
 
     return  (step1 * step2) % n2;
 }

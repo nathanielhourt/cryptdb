@@ -16,6 +16,7 @@ public:
     QCA::BigInteger add(const QCA::BigInteger &a, const QCA::BigInteger &b);
     QCA::BigInteger increment(const QCA::BigInteger &n);
     QCA::BigInteger mutate(const QCA::BigInteger &n);
+    QCA::BigInteger getRandomNumber();
 };
 
 #endif // PAILLIERPUBLICKEY_H

@@ -56,6 +56,13 @@ public:
      */
     QPair<DB::Word, QCA::SecureArray> encryptWordForSearch(DB::Word plainText);
 
+    PaillierPublicKey getPublicKey() {
+        return kPrimePrime.derivePublicKey();
+    }
+    QCA::BigInteger decryptNumber(QCA::BigInteger number) {
+        return kPrimePrime.decrypt(number);
+    }
+
 signals:
 
 public slots:

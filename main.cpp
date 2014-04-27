@@ -60,7 +60,6 @@ int main(int argc, char *argv[])
 
     DatabaseClient alice;
     DatabaseServer bob;
-    qDebug() << DB::database;
 
     //Read in the database
     DB::RowList rows;
@@ -78,17 +77,16 @@ int main(int argc, char *argv[])
         bob.appendRow(row);
     } //end for each row in encrypted database
 
-    //Search for IP add 0x6FDD4D99E
-    mpz_class search_term = 0x81A14B33;
-    QPair<DB::Word, QCA::SecureArray> search_pair = alice.encryptWordForSearch(QCA::BigInteger(search_term.get_str().c_str()).toArray().toByteArray());
-    DB::IndexedRowList found_pairs = bob.findRowsContaining(search_pair, -1);
-    qDebug() << "Searched database for" << search_pair.first.toHex() << "and got" << found_pairs.size() << "matching rows.";
+    mpz_class search_term = 0x8D657494;
+    DatabaseServer::SearchWord search_pair = alice.encryptWordForSearch(QCA::BigInteger(search_term.get_str().c_str()).toArray().toByteArray());
+    QList<DatabaseServer::SearchTerm> searchTerms;
+    searchTerms.append(DatabaseServer::SearchTerm(search_pair, DB::SourceIP));
 
-    DB::RowList decrypted_found_pairs = alice.decryptRows(found_pairs);
-    qDebug() << "Searched column 1 for" << search_pair.first.toHex() << "and got" << found_pairs.size() << "matching rows.";
-    foreach(DB::Row row, decrypted_found_pairs) {
-      qDebug() << row[0].toHex() << ", " << row[1].toHex() << ", " << print_protocol(row[2]) << ", " << row[3].toHex();
-    } //end for each decrypted row
+    search_term = 0x81A14B33;
+    search_pair = alice.encryptWordForSearch(QCA::BigInteger(search_term.get_str().c_str()).toArray().toByteArray());
+    searchTerms.append(DatabaseServer::SearchTerm(search_pair, DB::DestinationIP));
+
+    qDebug() << alice.decryptNumber(bob.numberOfRowsContainingMultiple(searchTerms, alice.getPublicKey())).toString();
 
     return 0;
 } //end main

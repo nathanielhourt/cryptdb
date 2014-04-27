@@ -4,12 +4,16 @@
 #include <QObject>
 #include <QtCrypto>
 #include "database.hpp"
+#include "paillierpublickey.hpp"
 
 class DatabaseServer : public QObject
 {
     Q_OBJECT
 public:
     explicit DatabaseServer(QObject *parent = 0);
+
+    typedef QPair<DB::Word, QCA::SecureArray> SearchWord;
+    typedef QPair<SearchWord, DB::Index> SearchTerm;
 
     /**
      * @brief Return the next available index within the database
@@ -58,6 +62,21 @@ public:
      * @return Rows in rowsToSearch which match the search word
      */
     DB::IndexedRowList findRowsContaining(DB::IndexedRowList rowsToSearch, QPair<DB::Word, QCA::SecureArray> search, qint8 column = -1) const;
+
+    /**
+     * @brief Similar to findRowsContaining, except it performs multiple searches
+     * @param searchTerms A list of <searchTerm, column> pairs. Any columns which are -1 mean match in any column.
+     * @return Rows in database which match all search terms
+     */
+    DB::IndexedRowList findRowsContainingMultiple(QList<SearchTerm> searchTerms) const;
+
+    /**
+     * @brief Same as findRowsContainingMultiple, except it returns the number of matches
+     * @param searchTerms A list of <searchTerm, column> pairs. Any columns which are -1 mean match in any column.
+     * @param key Public key to encrypt result with
+     * @return Paillier-encrypted count of rows that match all terms
+     */
+    QCA::BigInteger numberOfRowsContainingMultiple(QList<SearchTerm> searchTerms, PaillierPublicKey key) const;
 signals:
 
 public slots:
