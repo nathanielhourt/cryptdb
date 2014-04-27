@@ -77,6 +77,13 @@ public:
      * @return Paillier-encrypted count of rows that match all terms
      */
     QCA::BigInteger numberOfRowsContainingMultiple(QList<SearchTerm> searchTerms, PaillierPublicKey key) const;
+
+    /**
+     * @brief Same as numberOfRowsContainingMultiple, except it returns both the number of matches and the sum of values in a specific column of matching rows
+     * @param column The column to sum over; this column must be in DB::ComputableColumns
+     * @return <sum, count> where sum is the sum of all values in column in rows selected, and count is the number of values added to make sum
+     */
+    QPair<QCA::BigInteger, QCA::BigInteger> sumAndCountOfColumnInRowsContainingMultiple(QList<SearchTerm> searchTerms, DB::Columns column, PaillierPublicKey key) const;
 signals:
 
 public slots:

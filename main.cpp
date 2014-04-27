@@ -82,11 +82,10 @@ int main(int argc, char *argv[])
     QList<DatabaseServer::SearchTerm> searchTerms;
     searchTerms.append(DatabaseServer::SearchTerm(search_pair, DB::SourceIP));
 
-    search_term = 54;
-    search_pair = alice.encryptWordForSearch(QCA::BigInteger(search_term.get_str().c_str()).toArray().toByteArray());
-    searchTerms.append(DatabaseServer::SearchTerm(search_pair, DB::Length));
-
-    qDebug() << alice.decryptNumber(bob.numberOfRowsContainingMultiple(searchTerms, alice.getPublicKey())).toString();
+    QPair<QCA::BigInteger, QCA::BigInteger> result = bob.sumAndCountOfColumnInRowsContainingMultiple(searchTerms, DB::Length, alice.getPublicKey());
+    result.first = alice.decryptNumber(result.first);
+    result.second = alice.decryptNumber(result.second);
+    qDebug() << (result.first / result.second).toString();
 
     return 0;
 } //end main

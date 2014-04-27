@@ -62,3 +62,20 @@ QCA::BigInteger DatabaseServer::numberOfRowsContainingMultiple(QList<DatabaseSer
 {
     return key.encrypt(findRowsContainingMultiple(searchTerms).size());
 }
+
+QPair<QCA::BigInteger, QCA::BigInteger> DatabaseServer::sumAndCountOfColumnInRowsContainingMultiple(QList<DatabaseServer::SearchTerm> searchTerms, DB::Columns column, PaillierPublicKey key) const
+{
+    if (!DB::ComputableColumns.contains(column)) {
+        qWarning("Cannot get sum of values in column %d!", column);
+        return QPair<QCA::BigInteger, QCA::BigInteger>(key.encrypt(0), key.encrypt(0));
+    }
+
+    DB::IndexedRowList results = findRowsContainingMultiple(searchTerms);
+    QCA::BigInteger sum = key.encrypt(0);
+    QCA::BigInteger count = key.encrypt(results.size());
+
+    foreach (DB::IndexedRow row, results)
+        sum = key.add(sum, QCA::BigInteger(QCA::SecureArray(row.second[column])));
+
+    return QPair<QCA::BigInteger, QCA::BigInteger>(sum, count);
+}
