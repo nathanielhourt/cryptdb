@@ -9,7 +9,11 @@ typedef QPair<Index, Row> IndexedRow;
 typedef QList<IndexedRow> IndexedRowList;
 
 enum Protocol_Names {TCP, DB_LSP_DISC, SSDP, SNMP};
-enum Columns {SourceIP, DestinationIP, Protocol, Length};
+enum Columns {SourceIP, DestinationIP, Protocol, Length, EndColumns};
+
+const static QList<Columns> ComputableColumns = {
+    Length
+};
 
 const static QList<QList<quint32> > database = {
     {0x6FDD4D9E, 0x81A14B33, TCP, 57},
