@@ -66,6 +66,33 @@ int main(int argc, char *argv[])
     QCA::BigInteger sourceIP;
     QCA::BigInteger destIP;
 
+    //Valid IPs
+    const static QList<QCA::BigInteger> IPs = {0x6FDD4D9E, 0x81A14B33,0x81A14B9E, 0xEFFFFFFA,0xAE892A4B, 0x81A14B33,
+                                      0x6FDD4D9E, 0x81A14BFF, 0x8D657494, 0x81A14B33,0x6FDD4D9E, 0x81A14BFF,
+                                       0x8D657494, 0x81A14B33,0x6FDD4D9E,0x81A14B33, 0xC0A80167,
+                                        0x81A14B33, 0xC0A80167,0x81A14BFF, 0xAE892A4B, 0x81A14B33,0xAE892A4B,
+                                       0x81A14B33,0xA29FF2A5, 0x81A14B33, 0xAE892A4B, 0xC0A80167,0x6FDD4D9E,
+                                       0xC0A80167,0x81A14B33, 0xFFFFFFFF,0x81A14B33,0x81A14B9E,0xAE892A4B,
+                                       0xEFFFFFFA,0xA29FF2A5, 0x81A14B33, 0x8D657494, 0x81A14B33
+                                      };
+
+    //Read in the database
+    DB::RowList rows;
+    foreach(QList<quint32> row, DB::database) {
+        rows.append(DB::Row());
+        foreach (quint32 entry, row) {
+            mpz_class n(entry);
+            rows.last().append(QCA::BigInteger(n.get_str().c_str()).toArray().toByteArray());
+        } //end for each entry in the row
+    } //end for each row in the database
+
+    //Alice encrypts the information and sends it to the server
+    DB::RowList enc_database = alice.encryptNewRows(rows, 0);
+    foreach(DB::Row row, enc_database){
+        bob.appendRow(row);
+    } //end for each row in encrypted database
+
+
     int selection;
     bool inputflag = 1;
     while (inputflag != 0){
@@ -84,83 +111,122 @@ int main(int argc, char *argv[])
             inputflag = 0;
         }
         if(selection == 1){
-            qout<<"Enter SourceIP Address"<<endl;
+            qout<<"Enter SourceIP Address in hex"<<endl;
             qin << sourceIP;
-            //Convert to hex?
-            //Check if input is valid
+            while(!(IPs.contains(sourceIP))) { //check validity of source IP
+                qout<<"Invalid hex input. Please try again"<<endl;
+                qin << sourceIP;
+            }
+
             //Call Average_Msg_Len function
+            DatabaseServer::SearchWord search_pair = alice.encryptWordForSearch(QCA::BigInteger(sourceIP.get_str().c_str()).toArray().toByteArray());
+            QList<DatabaseServer::SearchTerm> searchTerms;
+            searchTerms.append(DatabaseServer::SearchTerm(search_pair, DB::SourceIP));
+
+            QPair<QCA::BigInteger, QCA::BigInteger> result = bob.sumAndCountOfColumnInRowsContainingMultiple(searchTerms, DB::Length, alice.getPublicKey());
+            result.first = alice.decryptNumber(result.first);
+            result.second = alice.decryptNumber(result.second);
+            qout<<"Source IP average message length:"<<endl;
+            qDebug() << (result.first / result.second).toString();
         }
         if(selection == 2){
-            qout<<"Enter DestinationIP Address"<<endl;
+            qout<<"Enter DestinationIP Address in hex"<<endl;
             qin << destIP;
-            //Convert to hex?
-            //Check if input is valid
+            while(!(IPs.contains(destIP))) { //check validity of destination IP
+                qout<<"Invalid hex input. Please try again"<<endl;
+                qin << destIP;
+            }
             //Call Average_Msg_Len function
+            DatabaseServer::SearchWord search_pair = alice.encryptWordForSearch(QCA::BigInteger(destIP.get_str().cstr()).toArray().toByteArray());
+            QList<DatabaseServer::SearchTerm> searchTerms;
+            searchTerms.append(DatabaseServer::SearchTerm(search_pair,DB::DestinationIP));
+
+            QPair<QCA::BigInteger, QCA::BigInteger> result = bob.sumAndCountOfColumnInRowsContainingMultiple(searchTerms, DB::Length, alice.getPublicKey());
+            result.first = alice.decryptNumber(result.first);
+            result.second = alice.decryptNumber(result.second);
+            qout<<"Destination IP average message length:"<<endl;
+            qDebug() << (result.first / result.second).toString();
         }
         if(selection == 3){
-            qout<<"Enter SourceIP Address"<<endl;
+            qout<<"Enter SourceIP Addressi in hex"<<endl;
             qin << sourceIP;
-            //Convert to hex?
-            //Check if input is valid
-            qout<<"Enter DestinationIP Address"<<endl;
+            while(!(IPs.contains(sourceIP))) { //check validity of source IP
+                qout<<"Invalid hex input. Please try again"<<endl;
+                qin << sourceIP;
+            }
+            qout<<"Enter DestinationIP Address in hex"<<endl;
             qin << destIP;
-            //Convert to hex?
-            //Check if input is valid
+            while(!(IPs.contains(destIP))) { //check validity of destination IP
+                qout<<"Invalid hex input. Please try again"<<endl;
+                qin << destIP;
+            }
+
             //Call From_to_Total_Msgs function
+            DatabaseServer::SearchWord search_pair1 = alice.encryptWordForSearch(QCA::BigInteger(sourceIP.get_str().cstr()).toArray().toByteArray());
+            QList<DatabaseServer::SearchTerm> searchterms;
+            searchTerms.append(DatabaseServer::SearchTerm(search_pair1,DB::SourceIP));
+
+            DatabaseServer::SearchWord search_pair2 = alice.encryptWordForSearch(QCA::BigInteger(destIP.get_str().cstr()).toArray().toByteArray());
+            searchTerms.append(DatabaseServer::SearchTerm(search_pair2,DB::DestinationIP));
+
+            QCA::BigInteger result = bob.findRowsContainingMultiple(searchTerms);
+            result=alice.decryptNumber(result);
+            qout<<"Total number of messages from source IP to destination IP"<<endl;
+            qout<<result;
+
         }
         if(selection == 4){
-            qout<<"Enter SourceIP Address"<<endl;
+            qout<<"Enter SourceIP Address in hex"<<endl;
             qin << sourceIP;
-            //Convert to hex?
-            //Check if input is valid
+            while(!(IPs.contains(sourceIP))) { //check validity of destination IP
+                qout<<"Invalid hex input. Please try again"<<endl;
+                qin << sourceIP;
+            }
             //Call Total_Outbound_Msgs function
+            DatabaseServer::SearchWord search_pair = alice.encryptWordForSearch(QCA::BigInteger(sourceIP.get_str().cstr()).toArray().toByteArray());
+            QList<DatabaseServer::SearchTerm> searchTerms;
+            searchTerms.append(DatabaseServer::SearchTerm(search_pair,DB::SourceIP));
+
+            QCA::BigInteger result = bob.findRowsContainingMultiple(searchTerms);
+            result=alice.decryptNumber(result);
+            qout<<"Total number of outbound messages from given source IP:"<<endl;
+            qout<<result;
         }
         if(selection == 5){
-            qout<<"Enter DestinationIP Address"<<endl;
+            qout<<"Enter DestinationIP Address in hex"<<endl;
             qin << destIP;
-            //Convert to hex?
-            //Check if input is valid
+            while(!(IPs.contains(destIP))) { //check validity of destination IP
+                qout<<"Invalid hex input. Please try again"<<endl;
+                qin << destIP;
+            }
             //Call Total_Inbound_Msgs function
+            DatabaseServer::SearchWord search_pair = alice.encryptWordForSearch(QCA::BigInteger(destIP.get_str().cstr()).toArray().toByteArray());
+            QList<DatabaseServer::SearchTerm> searchTerms;
+            searchTerms.append(DatabaseServer::SearchTerm(search_pair,DB::DestinationIP));
+
+            QCA::BigInteger result = bob.findRowsContainingMultiple(searchTerms);
+            result=alice.decryptNumber(result);
+            qout<<"Total number of inbound messages from given destination IP:"<<endl;
+            qout<<result;
         }
         if(selection == 6){
-            qout<<"Enter 1st IP address"<<endl;
+            qout<<"Enter 1st IP address in hex"<<endl;
             qin << sourceIP;
-            //Convert to hex?
-            //Check validity
-            qout<<"Enter 2nd IP address"<<endl;
+            while(!(IPs.contains(sourceIP))) { //check validity of destination IP
+                qout<<"Invalid hex input. Please try again"<<endl;
+                qin << sourceIP;
+            }
+            qout<<"Enter 2nd IP address in hex"<<endl;
             qin << destIP;
-            //Convert to hex
-            //Check validity
+            while(!(IPs.contains(destIP))) { //check validity of destination IP
+                qout<<"Invalid hex input. Please try again"<<endl;
+                qin << destIP;
+            }
             //Call Pearson_Corr_Coeff function?
         }
 
     }
 
-    //Read in the database
-    DB::RowList rows;
-    foreach(QList<quint32> row, DB::database) {
-        rows.append(DB::Row());
-        foreach (quint32 entry, row) {
-            mpz_class n(entry);
-            rows.last().append(QCA::BigInteger(n.get_str().c_str()).toArray().toByteArray());
-        } //end for each entry in the row
-    } //end for each row in the database
-
-    //Alice encrypts the information and sends it to the server
-    DB::RowList enc_database = alice.encryptNewRows(rows, 0);
-    foreach(DB::Row row, enc_database){
-        bob.appendRow(row);
-    } //end for each row in encrypted database
-
-    mpz_class search_term = 0x8D657494;
-    DatabaseServer::SearchWord search_pair = alice.encryptWordForSearch(QCA::BigInteger(search_term.get_str().c_str()).toArray().toByteArray());
-    QList<DatabaseServer::SearchTerm> searchTerms;
-    searchTerms.append(DatabaseServer::SearchTerm(search_pair, DB::SourceIP));
-
-    QPair<QCA::BigInteger, QCA::BigInteger> result = bob.sumAndCountOfColumnInRowsContainingMultiple(searchTerms, DB::Length, alice.getPublicKey());
-    result.first = alice.decryptNumber(result.first);
-    result.second = alice.decryptNumber(result.second);
-    qDebug() << (result.first / result.second).toString();
 
     return 0;
 } //end main
