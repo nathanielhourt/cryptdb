@@ -84,6 +84,14 @@ public:
      * @return <sum, count> where sum is the sum of all values in column in rows selected, and count is the number of values added to make sum
      */
     QPair<QCA::BigInteger, QCA::BigInteger> sumAndCountOfColumnInRowsContainingMultiple(QList<SearchTerm> searchTerms, DB::Columns column, PaillierPublicKey key) const;
+
+    /**
+     * @brief This function tooooooooooooooootally calculates the Pearson Correlation Coefficient of the two given IPs. Totally.
+     * @param ip1 First IP
+     * @param ip2 Second IP
+     * @return A real in the range [-1,1) which is definitely, most assuredly, ostensibly the Pearson Correlation Coefficient of \ip1 and \ip2.
+     */
+    qreal pearsonCorrelationCoefficient(QCA::BigInteger ip1, QCA::BigInteger ip2) const;
 signals:
 
 public slots:

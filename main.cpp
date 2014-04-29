@@ -105,7 +105,7 @@ int main(int argc, char *argv[])
         qout<< "3: From_To_Total#ofMsgs"<<endl;
         qout<< "4: Total_#of_Outbound_Msgs"<<endl;
         qout<< "5: Total_#of_Inbound_Msgs"<<endl;
-        qout<< "6: Pearson_Corr_Coeff??"<<endl;
+        qout<< "6: Pearson_Corr_Coeff"<<endl;
         qout<< "0: Exit"<<endl;
         qout<< endl << "Selection: " << flush;
 
@@ -200,7 +200,8 @@ int main(int argc, char *argv[])
             qout<<"Enter 2nd IP address in hex"<<endl;
             destIP = readHexToBigInteger();
 
-            //Call Pearson_Corr_Coeff function?
+            //Call Pearson_Corr_Coeff function
+            qout << bob.pearsonCorrelationCoefficient(sourceIP, destIP);
         }
 
         qout << endl << endl;

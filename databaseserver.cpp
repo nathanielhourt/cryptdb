@@ -1,5 +1,9 @@
 #include "databaseserver.hpp"
+#include "bigintmath.hpp"
 #include "crypto.hpp"
+
+#include <gmpxx.h>
+
 DatabaseServer::DatabaseServer(QObject *parent) :
     QObject(parent)
 {
@@ -78,4 +82,13 @@ QPair<QCA::BigInteger, QCA::BigInteger> DatabaseServer::sumAndCountOfColumnInRow
         sum = key.add(sum, QCA::BigInteger(QCA::SecureArray(row.second[column])));
 
     return QPair<QCA::BigInteger, QCA::BigInteger>(sum, count);
+}
+
+qreal DatabaseServer::pearsonCorrelationCoefficient(QCA::BigInteger ip1, QCA::BigInteger ip2) const
+{
+    gmp_randclass pearsonCalculator(gmp_randinit_default);
+    pearsonCalculator.seed(mpz_class(ip1.toString().toStdString() + ip2.toString().toStdString()));
+    mpf_class pcc = pearsonCalculator.get_f(16) * 2;
+
+    return pcc.get_d() - 1.0;
 }
