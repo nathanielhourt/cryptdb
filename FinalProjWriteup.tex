@@ -1,0 +1,73 @@
+\documentclass[12pt]{article}
+\usepackage{underscore}
+
+
+% ========================================================================
+% preamble
+% ========================================================================
+
+% (stuff that you don't have to mess with or worry about right now.)
+
+% margins, size, formatting
+\oddsidemargin=.05in
+\evensidemargin=.05in
+\topmargin=-.5in
+\textwidth=6in
+\textheight=9in
+\pagestyle{empty}
+
+% packages for fancy fonts, symbols, thm/proof environments, etc
+\usepackage{amsmath,amssymb,amsthm}
+
+\begin{document}
+
+% header =================================================================
+% PLEASE FILL IN THE CORRECT COURSE (e.g., MATH 311W),
+% THE CORRECT ASSIGNMENT NUMBER, THE CORRECT PROBLEM TYPE
+%(i.e., 10pt problems or 20 pt problems), AND YOUR NAME HERE
+{Nathan Hourt, Jen Karkoska, and Mike Moore\\ \indent April 30, 2014\\ \indent Cryptography and Network Security II}\vspace{\baselineskip}
+\begin{center}
+\textbf{Final Project User Manual}
+\end{center}
+
+\textbf{Introduction}\\
+
+The final project is an implementation of a scheme to search an encrypted database, based on Song, Wagner, and Perrig's paper ``Practical Techniques for Searches on Encrypted Data''.  An encrypted database allows a client to store data on an untrusted server without the server ever seeing the plaintext.  The client can query the database and use a private key to decrypt the resulting cipher text returned from the server.  The homomorphic Paillier encryption algorithm is used so that the server can perform all calculations solely on the cipher text.  Our work builds on the first project implementation by Patrick Biernat, Nathan Hourt, and Samuel Rhody.\\
+
+\textbf{Supported Queries}\\
+
+The program supports six computational queries from the command line. Note that all IP addresses must be given in hex.
+
+\begin{enumerate}
+\item \textit{SourceIP$_$Average$_$Msg$_$Len(Source IP Addr)} 
+
+The database will sum the length of each message sent by the given input source IP address and return the average message length.  The homomorphic property of the Paillier encryption system is used because the sum of plaintext message lengths is equal to the multiplication of the cipher text message lengths.
+
+\item \textit{DestinationIP$_$Average$_$Msg$_$Len(Destination IP Addr)}
+
+Similar to SourceIP$_$Average$_$Msg$_$Len(Source IP Addr), but computes the average message length sent to a given IP address.
+
+\item \textit{From$_$To$_$Total$\#$ofMsgs(Source IP Addr, Destination IP Addr)}
+
+Calculates the total number of messages sent from a given source IP address to a destination IP address.
+
+\item \textit{Total$_\#$of$_$Outbound$_$Msgs(Source IP Addr)}
+
+Calculates the total number of messages sent from a given IP address.
+
+\item \textit{Total$_\#$of$_$Inbound$_$Msgs(Destination IP Addr)}
+
+Calculates the total number of messages sent to a given IP address.
+
+\newpage
+\item \textit{Pearson$_$Corr$_$Coeff(IP Addr1, IP Addr2)}
+
+The Pearson Correlation Coefficient $r$ is a measure of the linear relationship between two variables $X$ and $Y$, where $r\in[-1,1]$.  A value of +1 denotes a positive correlation, 0 denotes no relationship between $X$ and $Y$, and -1 denotes a negative correlation.  In this case, the value returned determines how correlated two IP addresses are, based on a proprietary algorithm.
+
+\end{enumerate}
+
+Source code can be found at \textit{https://github.com/nathanhourt/cryptdb}.
+
+
+
+\end{document} % every document must end with this.
