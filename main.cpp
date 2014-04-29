@@ -4,6 +4,7 @@
 #include <QTextStream>
 #include <cstdio>
 #include <gmpxx.h>
+#include <iostream>
 
 #include "database.hpp"
 #include "databaseclient.hpp"
@@ -51,6 +52,18 @@ char* print_protocol(QByteArray protocol)
   } //end else SNMP
 } //end print_protocol
 
+/**
+ * @brief Utility function to read a hexadecimal number from stdin to a QCA::BigInteger
+ * Why is this so painful? Bug in QString::toInt() :(
+ * @return QCA::BigInteger of hex input
+ */
+QCA::BigInteger readHexToBigInteger() {
+    std::string numberString;
+    std::getline(std::cin, numberString);
+    mpz_class number(numberString, 16);
+    return QCA::BigInteger(number.get_str().c_str());
+}
+
 int main(int argc, char *argv[])
 {
     QCA::Initializer init;
@@ -65,16 +78,6 @@ int main(int argc, char *argv[])
     QTextStream qout(stdout);
     QCA::BigInteger sourceIP;
     QCA::BigInteger destIP;
-
-    //Valid IPs
-    const static QList<QCA::BigInteger> IPs = {0x6FDD4D9E, 0x81A14B33,0x81A14B9E, 0xEFFFFFFA,0xAE892A4B, 0x81A14B33,
-                                      0x6FDD4D9E, 0x81A14BFF, 0x8D657494, 0x81A14B33,0x6FDD4D9E, 0x81A14BFF,
-                                       0x8D657494, 0x81A14B33,0x6FDD4D9E,0x81A14B33, 0xC0A80167,
-                                        0x81A14B33, 0xC0A80167,0x81A14BFF, 0xAE892A4B, 0x81A14B33,0xAE892A4B,
-                                       0x81A14B33,0xA29FF2A5, 0x81A14B33, 0xAE892A4B, 0xC0A80167,0x6FDD4D9E,
-                                       0xC0A80167,0x81A14B33, 0xFFFFFFFF,0x81A14B33,0x81A14B9E,0xAE892A4B,
-                                       0xEFFFFFFA,0xA29FF2A5, 0x81A14B33, 0x8D657494, 0x81A14B33
-                                      };
 
     //Read in the database
     DB::RowList rows;
@@ -104,22 +107,19 @@ int main(int argc, char *argv[])
         qout<< "5: Total_#of_Inbound_Msgs"<<endl;
         qout<< "6: Pearson_Corr_Coeff??"<<endl;
         qout<< "0: Exit"<<endl;
+        qout<< endl << "Selection: " << flush;
 
-        qin >> selection;
+        selection = qin.readLine().toInt();
 
         if(selection == 0){
             inputflag = 0;
         }
         if(selection == 1){
             qout<<"Enter SourceIP Address in hex"<<endl;
-            qin << sourceIP;
-            while(!(IPs.contains(sourceIP))) { //check validity of source IP
-                qout<<"Invalid hex input. Please try again"<<endl;
-                qin << sourceIP;
-            }
+            sourceIP = readHexToBigInteger();
 
             //Call Average_Msg_Len function
-            DatabaseServer::SearchWord search_pair = alice.encryptWordForSearch(QCA::BigInteger(sourceIP.get_str().c_str()).toArray().toByteArray());
+            DatabaseServer::SearchWord search_pair = alice.encryptWordForSearch(sourceIP.toArray().toByteArray());
             QList<DatabaseServer::SearchTerm> searchTerms;
             searchTerms.append(DatabaseServer::SearchTerm(search_pair, DB::SourceIP));
 
@@ -131,13 +131,10 @@ int main(int argc, char *argv[])
         }
         if(selection == 2){
             qout<<"Enter DestinationIP Address in hex"<<endl;
-            qin << destIP;
-            while(!(IPs.contains(destIP))) { //check validity of destination IP
-                qout<<"Invalid hex input. Please try again"<<endl;
-                qin << destIP;
-            }
+            destIP = readHexToBigInteger();
+
             //Call Average_Msg_Len function
-            DatabaseServer::SearchWord search_pair = alice.encryptWordForSearch(QCA::BigInteger(destIP.get_str().cstr()).toArray().toByteArray());
+            DatabaseServer::SearchWord search_pair = alice.encryptWordForSearch(destIP.toArray().toByteArray());
             QList<DatabaseServer::SearchTerm> searchTerms;
             searchTerms.append(DatabaseServer::SearchTerm(search_pair,DB::DestinationIP));
 
@@ -148,28 +145,21 @@ int main(int argc, char *argv[])
             qDebug() << (result.first / result.second).toString();
         }
         if(selection == 3){
-            qout<<"Enter SourceIP Addressi in hex"<<endl;
-            qin << sourceIP;
-            while(!(IPs.contains(sourceIP))) { //check validity of source IP
-                qout<<"Invalid hex input. Please try again"<<endl;
-                qin << sourceIP;
-            }
+            qout<<"Enter SourceIP Address in hex"<<endl;
+            sourceIP = readHexToBigInteger();
+
             qout<<"Enter DestinationIP Address in hex"<<endl;
-            qin << destIP;
-            while(!(IPs.contains(destIP))) { //check validity of destination IP
-                qout<<"Invalid hex input. Please try again"<<endl;
-                qin << destIP;
-            }
+            destIP = readHexToBigInteger();
 
             //Call From_to_Total_Msgs function
-            DatabaseServer::SearchWord search_pair1 = alice.encryptWordForSearch(QCA::BigInteger(sourceIP.get_str().cstr()).toArray().toByteArray());
-            QList<DatabaseServer::SearchTerm> searchterms;
+            DatabaseServer::SearchWord search_pair1 = alice.encryptWordForSearch(sourceIP.toArray().toByteArray());
+            QList<DatabaseServer::SearchTerm> searchTerms;
             searchTerms.append(DatabaseServer::SearchTerm(search_pair1,DB::SourceIP));
 
-            DatabaseServer::SearchWord search_pair2 = alice.encryptWordForSearch(QCA::BigInteger(destIP.get_str().cstr()).toArray().toByteArray());
+            DatabaseServer::SearchWord search_pair2 = alice.encryptWordForSearch(destIP.toArray().toByteArray());
             searchTerms.append(DatabaseServer::SearchTerm(search_pair2,DB::DestinationIP));
 
-            QCA::BigInteger result = bob.findRowsContainingMultiple(searchTerms);
+            QCA::BigInteger result = bob.numberOfRowsContainingMultiple(searchTerms, alice.getPublicKey());
             result=alice.decryptNumber(result);
             qout<<"Total number of messages from source IP to destination IP"<<endl;
             qout<<result;
@@ -177,53 +167,43 @@ int main(int argc, char *argv[])
         }
         if(selection == 4){
             qout<<"Enter SourceIP Address in hex"<<endl;
-            qin << sourceIP;
-            while(!(IPs.contains(sourceIP))) { //check validity of destination IP
-                qout<<"Invalid hex input. Please try again"<<endl;
-                qin << sourceIP;
-            }
+            sourceIP = readHexToBigInteger();
+
             //Call Total_Outbound_Msgs function
-            DatabaseServer::SearchWord search_pair = alice.encryptWordForSearch(QCA::BigInteger(sourceIP.get_str().cstr()).toArray().toByteArray());
+            DatabaseServer::SearchWord search_pair = alice.encryptWordForSearch(sourceIP.toArray().toByteArray());
             QList<DatabaseServer::SearchTerm> searchTerms;
             searchTerms.append(DatabaseServer::SearchTerm(search_pair,DB::SourceIP));
 
-            QCA::BigInteger result = bob.findRowsContainingMultiple(searchTerms);
+            QCA::BigInteger result = bob.numberOfRowsContainingMultiple(searchTerms, alice.getPublicKey());
             result=alice.decryptNumber(result);
             qout<<"Total number of outbound messages from given source IP:"<<endl;
             qout<<result;
         }
         if(selection == 5){
             qout<<"Enter DestinationIP Address in hex"<<endl;
-            qin << destIP;
-            while(!(IPs.contains(destIP))) { //check validity of destination IP
-                qout<<"Invalid hex input. Please try again"<<endl;
-                qin << destIP;
-            }
+            destIP = readHexToBigInteger();
+
             //Call Total_Inbound_Msgs function
-            DatabaseServer::SearchWord search_pair = alice.encryptWordForSearch(QCA::BigInteger(destIP.get_str().cstr()).toArray().toByteArray());
+            DatabaseServer::SearchWord search_pair = alice.encryptWordForSearch(destIP.toArray().toByteArray());
             QList<DatabaseServer::SearchTerm> searchTerms;
             searchTerms.append(DatabaseServer::SearchTerm(search_pair,DB::DestinationIP));
 
-            QCA::BigInteger result = bob.findRowsContainingMultiple(searchTerms);
+            QCA::BigInteger result = bob.numberOfRowsContainingMultiple(searchTerms, alice.getPublicKey());
             result=alice.decryptNumber(result);
             qout<<"Total number of inbound messages from given destination IP:"<<endl;
             qout<<result;
         }
         if(selection == 6){
             qout<<"Enter 1st IP address in hex"<<endl;
-            qin << sourceIP;
-            while(!(IPs.contains(sourceIP))) { //check validity of destination IP
-                qout<<"Invalid hex input. Please try again"<<endl;
-                qin << sourceIP;
-            }
+            sourceIP = readHexToBigInteger();
+
             qout<<"Enter 2nd IP address in hex"<<endl;
-            qin << destIP;
-            while(!(IPs.contains(destIP))) { //check validity of destination IP
-                qout<<"Invalid hex input. Please try again"<<endl;
-                qin << destIP;
-            }
+            destIP = readHexToBigInteger();
+
             //Call Pearson_Corr_Coeff function?
         }
+
+        qout << endl << endl;
 
     }
 
